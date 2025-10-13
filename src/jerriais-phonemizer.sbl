@@ -1,0 +1,269 @@
+externals ( phonemize )
+
+routines (
+  exceptions
+  phoneme
+  consonant_phoneme
+  vowel_phoneme
+  silent_h
+  silent_l
+  word_initial
+  word_final
+)
+
+groupings (
+  vowels 
+  consonants 
+  e_any 
+  i_any 
+  y_any 
+  hard_vowels 
+  soft_vowels
+)
+
+stringescapes {}
+
+/* special characters */
+
+stringdef a^   '{U+00E2}'  // a-circumflex
+stringdef a`   '{U+00E0}'  // a-grave
+stringdef cc   '{U+00E7}'  // c-cedilla
+
+stringdef e"   '{U+00EB}'  // e-diaeresis (rare)
+stringdef e'   '{U+00E9}'  // e-acute
+stringdef e^   '{U+00EA}'  // e-circumflex
+stringdef e`   '{U+00E8}'  // e-grave
+stringdef i"   '{U+00EF}'  // i-diaeresis
+stringdef i^   '{U+00EE}'  // i-circumflex
+stringdef o^   '{U+00F4}'  // o-circumflex
+stringdef u^   '{U+00FB}'  // u-circumflex
+stringdef u`   '{U+00F9}'  // u-grave
+stringdef y^   '{U+0177}'  // y-grave
+
+
+stringdef esh   '{U+0283}'  // ʃ
+stringdef ezh   '{U+0292}'  // ʒ
+stringdef ich   '{U+00E7}'  // ç
+stringdef eth   '{U+00F0}'  // ð
+stringdef ngn   '{U+0272}'  // ɲ
+
+stringdef scripta '{U+0251}'  // ɑ
+stringdef eps     '{U+025B}'  // ɛ
+stringdef openo   '{U+0254}'  // ɔ
+stringdef oe      '{U+0153}'  // œ
+stringdef o`      '{U+00F8}'  // ø
+
+stringdef tilde     '{U+0303}'          // combining ~
+stringdef a~        '{U+00E3}'          // ã
+stringdef e~        '{U+1EBD}'          // ẽ
+stringdef o~        '{U+00F5}'          // õ
+stringdef scripta~  '{scripta}{tilde}'  // ɑ̃
+stringdef openo~    '{openo}{tilde}'    // ɔ̃
+stringdef eps~      '{eps}{tilde}'      // ɛ̃
+stringdef o`~       '{o`}{tilde}'       // ø̃
+
+stringdef long  '{U+02D0}'  // ː
+
+define e_any 'e{e"}{e'}{e^}{e`}'
+define i_any 'i{i"}{i^}'
+define y_any 'y{y^}'
+
+define soft_vowels e_any + i_any + y_any
+define hard_vowels 'a{a^}{a`}o{o^}u{u^}{u`}'
+
+define vowels hard_vowels + soft_vowels
+
+define consonants 'bc{cc}dfghjklmnpqrstvwxz'
+
+define exceptions as (
+  [substring] among (
+    'mille' (<- 'mil')
+    'ville' (<- 'vil')
+    'sept' (<- 's{eps}t')
+    // bapteme
+    'corps' (<- 'k{openo}r')
+    'temps' (<- 't{a~}')
+    'th{e'}e' (<- 'tei')
+    'j{e'}tho' (<- 'j{eps}t{openo}')
+    'eus' 'eut' (<- 'u')
+    'e{u^}nmes' (<- 'u{long}m')
+    'e{u^}tes' 'e{u^}tent' (<- 'u{long}t')
+    'e{u^}dres' 'e{u^}drent' (<- 'u{long}dr')
+    // TODO: eûsse etc
+    // etions
+  )
+)
+
+// TODO: Liasons
+
+define word_initial as (
+  silent_h
+  or ([ 'l' ('y' or 'i') ] test vowels <- 'j')
+)
+
+define silent_h as (
+  test substring 
+  among (
+    'histouaithe'
+    'heuthe'
+    'he{u^}theux'
+    // TODO: fill in list
+    (['h'] delete)
+  )
+)
+
+define silent_l as (
+  // l after certain consonants
+  (
+   test ('f' or 'g' or 'c' or 'b' or 'p' 'l' (y_any or i_any))
+   consonant_phoneme [ 'l' ] test (y_any or i_any) delete
+  )
+  // l'ye after consonant
+  or (
+    test (consonants 'l{'}ye') consonant_phoneme [ 'l{'}ye' ] <- 'j'
+  )
+)
+
+define consonant_phoneme as (
+    [substring] among (
+      'b' 'bb' (<- 'b')
+      '{cc}' (<- 's')
+      'c' ((test soft_vowels <- 's') or <- 'k')
+      'cc' ((test soft_vowels <- 'ks') or <- 'k')
+      'c{'}c' (<- 'ss')
+      'ch' (<- '{esh}')
+      'ch{'}ch' (<- '{esh}{esh}')
+      'd' 'dd' (<- 'd')
+      'd{'}d' (<- 'dd')
+      'dg' (<- 'd{ezh}')
+      'f' 'ff' (<- 'f')
+      'g' ((test soft_vowels <- '{ezh}') or <- 'g')
+      'g{'}g' (<- '{ezh}{ezh}')
+      'h' ()
+      'j' (<- '{ezh}')
+      'k' ()
+      'l' 'll' 'l{'}ye' (<- 'l')
+      'l{'}l' (<- 'll')
+      'm' 'mm' (<- 'm')
+      'n' 'nn' (<- 'n')
+      'ngn' (<- '{ngn}')
+      'n{'}n' (<- 'nn')
+      'p' 'pp' (<- 'p')
+      'qu' 'cqu' (<- 'k')
+      'r' 'rr' (<- 'r')
+      'rr{'}r' (<- 'rr')
+      's' 'sc' 'ss' (<- 's') // TODO: hard c
+      's{'}s' (<- 'ss')
+      'tion' (<- 'sj{o~}')
+      't' 'tt' (<- 't')
+      't{'}t' (<- 'tt')
+      'tch' (<- 't{esh}')
+      'th' (<- '{eth}')
+      'th{'}th' (<- '{eth}{eth}')
+      'v' ()
+      'w' ()
+      'x' (<- 'z')
+      'y' (<- 'j')
+      'z' (<- 'z')
+      '{'}' '-' (delete)
+      ' ' ()
+    )
+)
+
+define vowel_phoneme as (
+  [substring] among (
+    'a' '{a`}' (<- 'a')
+    '{a^}' (<- '{scripta}{long}')
+    'au' 'a{u^}' (<- 'ou')
+    'an' 'en' (<- '{scripta~}')
+    'ann' (<- 'an')
+    'angn' (<- 'a{ngn}')
+    'ain' 'ein' (<- '{eps~}')
+    'aill' (<- 'aj')
+    'e' '{e'}' '{e`}' 'ei' (<- '{eps}')
+    '{e^}' 'ai' (<- 'ei')
+    '{e'}e' '{e'}es' (<- 'e')
+    'e{i^}' (<- '{eps}{long}')
+    'eu' 'oeu' (<- '{oe}')
+    'e{u^}' (<- '{oe}{long}')
+    'enn' (<- '{eps}n')
+    'i' 'y' ((test vowels <- 'j') or <- 'i')
+    '{i^}' '{y^}' (<- 'i{long}')
+    'in' (<- '{e~}')
+    '{i^}n' (<- '{e~}{long}')
+    'ien' (<- 'i{eps~}')
+    'ill' 'illi' (<- 'j')
+    'o' (<- '{openo}')
+    '{o^}' (<- 'ou')
+    'ou' ((test vowels <- 'w') or <- 'u')
+    'o{u^}' 'oue' (<- 'u{long}')
+    'on' 'om' (<- '{o~}')
+    '{o^}n' '{o^}m' (<- '{o~}{long}')
+    'onn' 'onne' (<- 'on')
+    'omm' 'omme' (<- 'om')
+    'u' '{u`}' (<- 'y')
+    '{u^}' (<- 'y{long}')
+    'ui' (<- 'ui')
+    'u{i^}' (<- 'ui{long}')
+    'un' 'um' (<- '{o`~}')
+    'unn' (<- 'un')
+    'umm' (<- 'um')
+    'yi' (<- 'ji')
+  )
+  // intervocalic s
+  try (['s'] test vowels <- 'z')
+)
+
+define word_final as (
+    test (
+      [substring] 
+      not next 
+    )
+    among (
+      'ai'
+      'et'
+      (<- '{eps}')
+      'er'
+      (<- 'e')
+      'a{i^}'
+      (<- '{eps}{long}')
+      'au'
+      'aux'
+      'eaux'
+      (<- 'ou')
+      'ieau'
+      'ieaux'
+      (<- 'iou')
+      'ais'
+      'ait'
+      'aient'
+      'aie'
+      'aies'
+      '{e'}s'
+      'ets'
+      'ez'
+      'es'
+      (<- 'e')
+      'o'
+      'os'
+      (<- 'o')
+      'inne'
+      (<- 'In')
+      'it' 'id' (<- 'i')
+      'ie' 'is' 'iz' 'ix' 'its' 'ids' (<- 'i{long}')
+      // TODO: plural of silent final vowel
+      'b' 'c' 'd' 'e' 'g' 'h' 'j' 'k' 'm' 'n' 'p' 's' 't' 'v' 'w' 'x' 'y' 'z' (delete)
+    )
+    tolimit
+)
+
+define phoneme as ( 
+    word_final
+    or silent_l
+    or consonant_phoneme
+    or vowel_phoneme
+  )
+
+define phonemize as (
+    exceptions or try word_initial repeat phoneme
+)
