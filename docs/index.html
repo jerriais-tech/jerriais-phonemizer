@@ -60,7 +60,21 @@
       </div>
     </div>
     <div class="container px-4 py-5">
+      <h2 class="pb-2 border-bottom">History</h2>
+      <p>The words you have tried appear here.</p>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Word</th>
+            <th scope="col">Phonemes</th>
+          </tr>
+        </thead>
+        <tbody id="history"></tbody>
+      </table>
+    </div>
+    <div class="container px-4 py-5">
       <h2 class="pb-2 border-bottom">Test cases</h2>
+      <p>The examples used internally to test the program.</p>
       <table class="table">
         <thead>
           <tr>
@@ -80,10 +94,19 @@
 
       const input = document.getElementById("form-message");
       const phonemizedInput = document.getElementById("phonemized");
+      const history = document.getElementById("history");
       document.getElementById("form").addEventListener("submit", (event) => {
         event.preventDefault();
         const phonemized = phonemizer.phonemize(input.value);
         phonemizedInput.value = phonemized;
+        const row = document.createElement("tr");
+        const word_td = document.createElement("td");
+        const phonemes_td = document.createElement("td");
+        word_td.innerHTML = input.value;
+        phonemes_td.innerHTML = phonemized;
+        row.appendChild(word_td);
+        row.appendChild(phonemes_td);
+        history.prepend(row);
       });
 
       const test_cases_csv = `allemand,almɑ̃
@@ -177,7 +200,7 @@ vieilli,vjeji
 vieil'ye,vjɛl
 wesleyen,wɛsleiɛ̃`;
       const test_cases = test_cases_csv.split("\n").map((x) => x.split(","));
-      const table = document.getElementById("test-cases");
+      const test_table = document.getElementById("test-cases");
       test_cases.forEach(([word, expected]) => {
         const actual = phonemizer.phonemize(word);
         const row = document.createElement("tr");
@@ -196,7 +219,7 @@ wesleyen,wɛsleiɛ̃`;
         row.appendChild(expected_td);
         row.appendChild(actual_td);
         row.appendChild(status_td);
-        table.appendChild(row);
+        test_table.appendChild(row);
       });
     </script>
   </body>
