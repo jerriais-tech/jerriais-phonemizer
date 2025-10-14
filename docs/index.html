@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jèrriais Phonemizer | Jèrriais.Tech</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="px-4 py-5 my-5 text-center">
+      <h1 class="display-5 fw-bold text-body-emphasis">Jèrriais.Tech</h1>
+    </div>
+
+    <div class="container px-4 py-5">
+      <h2 class="pb-2 border-bottom">Phonemizer</h2>
+      <div class="col-lg-12 px-0">
+        <form id="form">
+          <fieldset>
+            <div class="mb-3">
+              <label for="form-message" class="form-label"
+                >Jèrriais word (lowercase)</label
+              >
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="w-50">
+                  <input
+                    required
+                    class="form-control me-2"
+                    id="form-message"
+                    name="message"
+                    value="bouônjour"
+                  />
+                </div>
+                <div class="w-50">
+                  <input
+                    id="phonemized"
+                    disabled
+                    class="form-control ms-2"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary">Submit</button>
+              <div
+                style="display: none"
+                class="alert alert-danger my-3"
+                role="alert"
+              >
+                Something went wrong. Please try again later.
+              </div>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+    <div class="container px-4 py-5">
+      <h2 class="pb-2 border-bottom">Test cases</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Word</th>
+            <th scope="col">Expected</th>
+            <th scope="col">Actual</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody id="test-cases"></tbody>
+      </table>
+    </div>
+    <script type="module">
+      import { Phonemizer } from "./js/phonemizer.js";
+
+      const phonemizer = new Phonemizer();
+
+      const input = document.getElementById("form-message");
+      const phonemizedInput = document.getElementById("phonemized");
+      document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const phonemized = phonemizer.phonemize(input.value);
+        phonemizedInput.value = phonemized;
+      });
+
+      const test_cases_csv = `allemand,almɑ̃
+abandonnement,abɑ̃donmɑ̃
+abandonner,abɑ̃done
+abbaye,abei
+acceptabl'ye,aksɛptabj
+accidentellement,aksidɑ̃tɛlmɑ̃
+aime,eim
+affliouer,afjue
+angliais,ɑ̃gje
+baue,bouː
+bibliothèque,bibjɔtɛk
+bieau,bjou
+bliaûmer,bjoume
+blioûtinne,bjuːtIn
+bliuâtre,bjyɑtr
+bliue,bjyː
+bliui,bjui
+bouôn,bwõ
+charmant,ʃarmɑ̃
+charmante,ʃarmɑ̃t
+coutchieaux,kutʃjouː
+chinnetèrre,ʃIntɛːr
+cliai,kje
+clié,kjɛ
+cliouage,kjuaʒ
+cliouer,kjue
+clioueux,kjuœː
+craoude,kraud
+dêpieauser,deipjouze
+dgiaume,dʒjoum
+dribblier,dribje
+d'senchantement,dsɑ̃ʃɑ̃tmɑ̃
+d'senchanter,dsɑ̃ʃɑ̃te
+êblioui,eibjui
+finnement,fInmɑ̃
+flieur,fjœr
+fliaue,fjouː
+geouounniéthe,ʒwunjɛð
+gliaine,gjɛn
+graiethie,greiɛðiː
+grégeais,grɛʒe
+hypothèque,ipɔtɛk
+ieau,jou
+încriyabl'ye,ẽkrijabj
+kayaqu'thie,kajakðiː
+laïesse,lajɛs
+lentement,lɑ̃tmɑ̃
+lieue,jœː
+malentendre,malɑ̃tɑ̃dr
+maraouau,marauou
+matéthiaux,matɛðjouː
+mayonnaise,majoneiz
+ouaïeurer,wajœre
+ouinneteu,wIntœ
+ouinnette,wInɛt
+ouaîsieaux,weizjouː
+païen,peiɛ̃
+païethie,pajɛðiː
+paîsson,peisõ
+pataöuarre,patawar
+payeux,pajœː
+pinnetchinner,pInɛtʃIne
+pliein,pjɛ̃
+pouaîson,pweizõ
+payi,peːji
+pliaiche,pjeiʃ
+pliaie,pjei
+pliaîsi,pjeizi
+pliaît,pjei
+radgioacti,radʒjɔakti
+rapinneusement,rapInœzmɑ̃
+rayon,rajõ
+r'lieûthe,rjœːð
+r'tchiyant,rtʃijɑ̃
+reue,rœː
+spéciaûté,spɛsjoutɛ
+strasbourgeouais,strasburʒwe
+supplyicâtion,sypjikɑsjõ
+tabl'ye,tabj
+tchilliaîthon,tʃijieiðõ
+tchinnepé,tʃInpɛ
+tchînzièmement,tʃẽzjɛmmɑ̃
+thée,te
+travailli,travɑːji
+trinneté,trIntɛ
+vaie,vei
+veil'ye,vɛl
+vieilli,vjeji
+vieil'ye,vjɛl
+wesleyen,wɛsleiɛ̃`;
+      const test_cases = test_cases_csv.split("\n").map((x) => x.split(","));
+      const table = document.getElementById("test-cases");
+      test_cases.forEach(([word, expected]) => {
+        const actual = phonemizer.phonemize(word);
+        const row = document.createElement("tr");
+        const word_td = document.createElement("td");
+        const expected_td = document.createElement("td");
+        const actual_td = document.createElement("td");
+        const status_td = document.createElement("td");
+        word_td.innerHTML = word;
+        expected_td.innerHTML = expected;
+        actual_td.innerHTML = actual;
+        const status = expected === actual;
+        status_td.innerHTML = status ? "Pass" : "Fail";
+        status_td.classList.add(status ? "text-success" : "text-danger");
+
+        row.appendChild(word_td);
+        row.appendChild(expected_td);
+        row.appendChild(actual_td);
+        row.appendChild(status_td);
+        table.appendChild(row);
+      });
+    </script>
+  </body>
+</html>

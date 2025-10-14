@@ -1,8 +1,11 @@
-all: javascript python
+all: javascript python docs
 
 javascript: dist/javascript/phonemizer.js
 
 python: dist/python/phonemizer.py
+
+docs: javascript
+	cp dist/javascript/base-stemmer.js dist/javascript/phonemizer.js docs/js
 
 test: python tests/test_cases.csv
 	python tests/test.py
