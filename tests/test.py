@@ -14,7 +14,7 @@ class Colors:
     RESET = '\033[0m'
 
 if __name__ == "__main__":
-    csv_filepath = "test_cases.csv"
+    test_case_filepath = "test_cases.csv"
 
     phonemizer = Phonemizer()
 
@@ -22,9 +22,9 @@ if __name__ == "__main__":
     passed_tests = 0
     failed_tests = []
 
-    print(f"{Colors.YELLOW}--- Running tests using {csv_filepath} ---{Colors.RESET}")
+    print(f"{Colors.YELLOW}--- Running tests using {test_case_filepath} ---{Colors.RESET}")
 
-    with open(path.join(current_dir, csv_filepath), 'r', newline='', encoding='utf-8') as f:
+    with open(path.join(current_dir, test_case_filepath), 'r', newline='', encoding='utf-8') as f:
         reader = csv.DictReader(f)
 
         for row in reader:
