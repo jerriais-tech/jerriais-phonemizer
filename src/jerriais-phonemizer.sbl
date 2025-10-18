@@ -159,7 +159,7 @@ define mid_word_exceptions as (
       'ainem' 'einem' (<- '{eps}nm' unset after_vowel)
       'ent' 'ant' (
         (
-          test 'e'
+          test ('e' or 'i')
           <- '{scripta~}t'
           unset after_vowel
           test try (

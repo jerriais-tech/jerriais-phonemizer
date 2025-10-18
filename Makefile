@@ -22,7 +22,7 @@ python: dist/python/phonemizer.py
 docs: javascript
 	cp dist/javascript/base-stemmer.js dist/javascript/phonemizer.js docs/js
 
-test: python tests/test_cases.csv
+test: python tests/test_cases.csv snapshot
 	python tests/test.py
 
 dist/c/phonemizer.c dist/c/phonemizer.h: src/jerriais-phonemizer.sbl
