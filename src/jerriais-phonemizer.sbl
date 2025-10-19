@@ -82,6 +82,8 @@ define vowels_without_y vowels - y_any
 
 define consonants 'bc{cc}dfghjklmnpqrstvwxz'
 
+get 'src/ent-words.sbl'
+
 define exceptions as (
   [substring] among (
     'biblioth{e`}que' (<- 'bibj{openo}t{eps}k')
@@ -376,5 +378,8 @@ define phoneme as (
 define phonemize as (
     unset after_vowel
     exceptions 
-    or try word_initial repeat phoneme
+    or 
+    test_pronounce_nt
+    try word_initial
+    repeat phoneme
 )
