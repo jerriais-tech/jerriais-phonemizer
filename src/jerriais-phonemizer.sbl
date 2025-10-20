@@ -73,7 +73,7 @@ define word_initial as (
   ([ 'th' ] <- '{t}')
   or ([ try 'l' ('y' or 'i') ] test vowels <- '{j}')
   or (['tu{'}'] test vowels <- '{t}{w}')
-  // or (['ex' try ('c' test soft_vowels)] <- '{eps}{k}{s}')
+  or (['ex' try ('c' test soft_vowels)] <- '{eps}{k}{s}')
 )
 
 // TODO: entr
