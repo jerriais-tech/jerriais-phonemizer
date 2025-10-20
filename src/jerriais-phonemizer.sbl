@@ -5,6 +5,9 @@ get 'src/silent_nt.sbl'
 get 'src/silent_h.sbl'
 
 routines (
+  phonemize_word
+  phonemize_word_with_hyphens
+  exceptions_with_hyphens
   exceptions
   phoneme
   consonant_phoneme
@@ -29,6 +32,7 @@ define pre_word as (
     'm{'}' (<- '{m}')
     'n{'}' (<- '{n}')
     'qu{'}' (<- '{k}')
+    'tu{'}' ((test ('ou' vowels) <- '{t}') or <- '{t}{w}')
   )
 )
 
@@ -37,15 +41,18 @@ define exceptions as (
     [substring]
     atlimit
     among (
+      'x' (<- '{eps}{k}{s}')
       'les' (<- '{l}{e}')
       'hie' (<- '{i}{long}')
       'guy' (<- '{g}{y}')
+      'v{i^}ngt' 'v{i^}ngts' (<- '{v}{e~}')
     )
   )
   or
   (
     [substring] 
     among (
+      'v{i^}ngt' (<- '{v}{e~}t')
       'ville' (<- '{v}{i}{l}')
       'mille' (<- '{m}{i}{l}')
       'biblioth{e`}que' (<- '{b}{i}{b}{j}{openo}{t}{eps}{k}')
@@ -73,7 +80,6 @@ define word_initial as (
   try silent_h
   ([ 'th' ] <- '{t}')
   or ([ try 'l' ('y' or 'i') ] test vowels <- '{j}')
-  or (['tu{'}'] test vowels <- '{t}{w}')
   or ([('ex' or 'x-') try ('c' test soft_vowels)] <- '{eps}{k}{s}')
 )
 
@@ -158,9 +164,8 @@ define consonant_phoneme as (
       'w' ()
       'x' (<- '{z}')
       'z' (<- '{z}')
-      '{'}' (delete)
+      '{'}' '-' (delete)
       ' ' ()
-      '-' (<- ' ')
     )
 )
 
@@ -178,8 +183,8 @@ define vowel_phoneme as (
     'aill{'}l' (<- '{scripta}{long}{j}{j}')
     'ayi' (<- '{e}{long}{j}{i}')
     'e' '{e'}' '{e`}' 'ei' (<- '{eps}')
+    '{e'}e' (<- '{e}')
     '{e^}' (<- '{e}{i}')
-    '{e'}e' '{e'}es' (<- '{e}')
     'e{i^}' (<- '{eps}{long}')
     'eu' (<- '{oe}')
     'e{u^}' (<- '{oe}{long}')
@@ -252,8 +257,7 @@ define vowel_phoneme as (
 
 define word_final as (
     [substring] 
-    // Remove this when multi-word is implemented
-    (atlimit or test '-')
+    atlimit
     among (
       '-t-i{'}' (<- ' {t}{i}')
       'ai' 'ais' 'er'
@@ -262,7 +266,7 @@ define word_final as (
         (<- '{eps~}')
       'aye'
         (<- '{e}{i}')
-      'et' 'ets'
+      'et' 'ets' '{e"}t' '{e"}ts'
         (<- '{eps}')
       'a{i^}' 'a{i^}s'
         (<- '{eps}{long}')
@@ -281,6 +285,9 @@ define word_final as (
         (<- '{oe}{long}')
       'euse'
         (<- '{oe}{long}{z}')
+      '{e'}e'
+      '{e'}es'
+        (<- '{e}') // TODO: long
       'ait'
       'aient'
       'aie'
@@ -366,9 +373,7 @@ define phoneme as (
     or consonant_phoneme
   )
 
-// TODO: multi word
-
-define phonemize as (
+define phonemize_word as (
     repeat pre_word
     exceptions 
     or 
@@ -376,3 +381,51 @@ define phonemize as (
     try word_initial
     repeat phoneme
 )
+
+strings ( suffix )
+
+define exceptions_with_hyphens as (
+  backwards (
+    [substring]
+    among (
+      '-t-i{'}'
+      '-t-alle'
+      '-ous'
+      '-ieune'
+      '-ieuni{e`}me'
+    )
+    -> suffix
+  )
+  setlimit goto suffix for phonemize_word_with_hyphens
+  backwards (
+    [substring]
+    among (
+      '-t-i{'}' (<- '{t}{i}')
+      '-t-alle' (<- '{t}{a}{l}')
+      '-ous' (<- '{u}')
+      '-ieune' (<- '{j}{oe}{n}')
+      '-ieuni{e`}me' (<- '{j}{oe}{n}{j}{eps}{m}')
+    )
+  )
+  tolimit
+)
+
+define phonemize_word_with_hyphens as (
+  exceptions_with_hyphens or
+  repeat (
+     setlimit ((goto '-') or tolimit) for phonemize_word
+     goto '-'
+     ['-'] <- ' '
+  )
+)
+
+define phonemize as (
+  repeat (
+    setlimit ((goto ' ') or tolimit) for (
+      phonemize_word_with_hyphens
+    )
+    gopast ' '
+  )
+)
+
+// TODO: clean input
