@@ -1,4 +1,5 @@
 input,expected_output
+a-t-i',ati
 allemand,almɑ̃
 abafoue,abafuː
 abafouîssent,abafwiːs
@@ -10,11 +11,13 @@ accidentellement,aksidɑ̃tɛlmɑ̃
 aime,eim
 aiment,eim
 affliouer,afjue
+avaû-sé,avousɛ
 angliais,ɑ̃gje
 attrapent,atrap
 baue,bouː
 bibliothèque,bibjɔtɛk
 bieau,bjou
+biguesse,bigɛs
 bliaûmer,bjoume
 blioûtinne,bjuːtIn
 bliuâtre,bjyɑːtr
@@ -47,11 +50,14 @@ geouounniéthe,ʒwunjɛð
 gliaine,gjɛn
 graiethie,greiɛðiː
 grégeais,grɛʒe
+hielle,jɛl
+hôpita,oupita
 hypothèque,ipɔtɛk
 ieau,jou
 încriyabl'ye,ẽkrijabj
 kayaqu'thie,kajakðiː
 laïesse,lajɛs
+langue,lɑ̃g
 lentement,lɑ̃tmɑ̃
 lieue,jœː
 malentendre,malɑ̃tɑ̃dr
@@ -59,7 +65,10 @@ maraouau,marauou
 matéthiaux,matɛðjouː
 mayonnaise,majoneiz
 menn'tie,mɛntiː
+mennetie,mɛntiː
 menti,mɑ̃ti
+mouoyenner,mwɔjɛne
+onguent,õgɑ̃
 ouaïeurer,wajœre
 ouinneteu,wIntœ
 ouinnette,wInɛt
@@ -90,6 +99,7 @@ strasbourgeouais,strasburʒwe
 supplyicâtion,sypjikɑːsjõ
 tabl'ye,tabj
 tâsse,tɑːs
+tchennevais,tʃɛnve
 tchilliaîthon,tʃijieiðõ
 tchinnepé,tʃInpɛ
 tchînzièmement,tʃẽzjɛmmɑ̃

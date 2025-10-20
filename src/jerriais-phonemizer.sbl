@@ -13,33 +13,51 @@ routines (
   word_initial
   word_final
   mid_word_exceptions
+  delete_soft_e
 )
 
 define exceptions as (
-  [substring] 
-  among (
-    'biblioth{e`}que' (<- '{b}{i}{b}{j}{openo}{t}{eps}{k}')
-    'hypoth{e`}que' (<- '{i}{p}{openo}{t}{eps}{k}')
-    'mille' (<- '{m}{i}{l}')
-    'ville' (<- '{v}{i}{l}')
-    'sept' (<- '{s}{eps}{t}')
-    'corps' (<- '{k}{openo}{r}')
-    'j{e'}tho' (<- '{j}{eps}{t}{openo}')
-    'eus' 'eut' (<- '{u}')
-    'e{u^}nmes' (<- '{u}{long}{m}')
-    'e{u^}tes' 'e{u^}tent' (<- '{u}{long}{t}')
-    'e{u^}dres' 'e{u^}drent' (<- '{u}{long}{d}{r}')
-    // TODO: eûsse etc
-    // etions
+  (
+    [substring]
+    atlimit
+    among (
+      'les' (<- '{l}{e}')
+      'hie' (<- '{i}{long}')
+      'guy' (<- '{g}{y}')
+    )
+  )
+  or
+  (
+    [substring] 
+    among (
+      'ville' (<- '{v}{i}{l}')
+      'mille' (<- '{m}{i}{l}')
+      'biblioth{e`}que' (<- '{b}{i}{b}{j}{openo}{t}{eps}{k}')
+      'hypoth{e`}que' (<- '{i}{p}{openo}{t}{eps}{k}')
+      'sept' (<- '{s}{eps}{t}')
+      'corps' (<- '{k}{openo}{r}')
+      'j{e'}tho' (<- '{j}{eps}{t}{openo}')
+      'eus' 'eut' (<- '{u}')
+      'e{u^}nmes' (<- '{u}{long}{m}')
+      'e{u^}tes' 'e{u^}tent' (<- '{u}{long}{t}')
+      'e{u^}dres' 'e{u^}drent' (<- '{u}{long}{d}{r}')
+      'guy' (<- '{g}{y}{j}')
+      'biguesse' (<- '{b}{i}{g}{eps}{s}')
+      'onguenn' (<- '{o~}{g}{scripta~}{n}')
+      'onguent' (<- '{o~}{g}{scripta~}')
+      // TODO: eûsse etc
+      // etions
+    )
   )
 )
 
 // TODO: Liasons
 
 define word_initial as (
-  silent_h
-  or ([ 'th' ] <- '{t}')
-  or ([ 'l' ('y' or 'i') ] test vowels <- '{j}')
+  try silent_h
+  ([ 'th' ] <- '{t}')
+  or ([ try 'l' ('y' or 'i') ] test vowels <- '{j}')
+  or (['tu{'}'] test vowels <- '{t}{w}')
 )
 
 define silent_l as (
@@ -70,13 +88,22 @@ define mid_word_exceptions as (
   )
 )
 
+define delete_soft_e as (
+    try (
+      ['e']
+      test ('o' or '{o^}' or 'a' or '{a^}')
+      delete
+    )
+)
+
 define consonant_phoneme as (
     [substring] among (
       'b' 'bb' (<- '{b}')
       '{cc}' (<- '{s}')
-      'c' ((test soft_vowels <- '{s}') or <- '{k}')
-      'cc' ((test soft_vowels <- '{k}{s}') or <- '{k}')
+      'c' ((test soft_vowels <- '{s}' delete_soft_e) or <- '{k}')
+      'cc' ((test soft_vowels <- '{k}{s}' delete_soft_e) or <- '{k}')
       'c{'}c' (<- '{s}{s}')
+      'ce{'}' (<- '{s}')
       'ch' (<- '{esh}')
       'ch{'}ch' (<- '{esh}{esh}')
       'chr' (<- '{k}{r}')
@@ -84,19 +111,9 @@ define consonant_phoneme as (
       'd{'}d' (<- '{d}{d}')
       'dg' (<- '{d}{ezh}')
       'f' 'ff' (<- '{f}')
-      'g' (
-        (
-          test (soft_vowels or '{'}')
-          <- '{ezh}'
-          // Delete following e if it only exists to soften hard vowel
-          try (
-            ['e']
-            test ('o' or '{o^}' or 'a' or '{a^}')
-            delete
-          )
-        )
-        or <- '{g}'
-      )
+      'g' ((test (soft_vowels or '{'}') <- '{ezh}' delete_soft_e) or <- '{g}')
+      'gu' ((test (soft_vowels or '{'}') <- '{g}') or <- '{g}{y}')
+      'gue' (<- '{g}')
       'h' ()
       'j' (<- '{ezh}')
       'k' ()
@@ -111,7 +128,8 @@ define consonant_phoneme as (
       'qu' 'cqu' (<- '{k}')
       'r' 'rr' (<- '{r}')
       'rr{'}r' (<- '{r}{r}')
-      's' 'ss' (<- '{s}')
+      's' ((reverse ('s' try '{long}' ipa_oral_vowels) test vowels <- '{z}') or <- '{s}')
+      'ss' (<- '{s}')
       'sc' ((test soft_vowels <- '{s}') or <- '{s}{k}')
       's{'}s' (<- '{s}{s}')
       't' 'tt' (<- '{t}')
@@ -136,8 +154,7 @@ define vowel_phoneme as (
     'au' 'a{u^}' (<- '{o}{u}')
     'en' '{e"}n' 'em' '{e"}m' (<- '{scripta~}')
     'an' ((test vowels <- 'an') or <- '{scripta~}')
-    'ann' (<- '{a}{n}')
-    'angn' (<- '{a}{gn}')
+    'ann' (<- '{scripta}{n}')
     'ain' 'ein' ((test vowels <- '{eps}{n}') or <- '{eps~}')
     'aill' (<- '{scripta}{long}{j}')
     'aill{'}l' (<- '{scripta}{long}{j}{j}')
@@ -149,7 +166,7 @@ define vowel_phoneme as (
     'eu' (<- '{oe}')
     'e{u^}' (<- '{oe}{long}')
     'eau' (<- '{o}{u}')
-    'enn' (<- '{eps}{n}')
+    'enn' 'enne' (<- '{eps}{n}')
     'eill' (<- '{e}{j}')
     'eill{'}l' (<- '{e}{long}{j}{j}')
     '{i"}' 'y' ((test vowels_without_y <- '{j}') or <- '{i}')
@@ -178,7 +195,7 @@ define vowel_phoneme as (
     'ainem' 'einem' (<- '{eps}{n}{m}')
     'ent' 'ant' (
       (
-        test vowels
+        test (vowels or 'ch')
         <- '{scripta~}{t}'
         test try (
           [ 'e' ]
@@ -198,18 +215,27 @@ define vowel_phoneme as (
     'unn' (<- '{u}{n}')
     'umm' (<- '{u}{m}')
     'yi' (<- '{j}{i}')
-    // use reverse to check for previous consonant
     'i' ((reverse ('i' ipa_consonants) test vowels_without_y <- '{j}') or <- '{i}')
-    'ou' ((reverse ('ou' (ipa_consonants or atlimit)) test vowels <- '{w}') or <- '{u}')
-    'ill' ((reverse ('ill' ipa_vowels)  <- '{j}') or <- '{i}{j}')
+    'ou' (
+      (
+        reverse (
+          'ou' 
+          (ipa_consonants or (try '{long}' ipa_nasal_vowels) or atlimit)
+        ) 
+        test vowels 
+        <- '{w}'
+      )
+      or <- '{u}'
+    )
+    'ill' ((reverse ('ill' try '{long}' ipa_vowels)  <- '{j}') or <- '{i}{j}')
+    'ill{'}l' ((reverse ('ill{'}' try '{long}' ipa_vowels)  <- '{j}{j}') or <- '{i}{j}{j}')
   )
-  // intervocalic s
-  try (['s'] test vowels <- '{z}')
 )
 
 define word_final as (
     [substring] 
-    atlimit
+    // Remove this when multi-word is implemented
+    (atlimit or test '-')
     among (
       'ai' 'ais' 'er'
         (<- '{e}')
@@ -245,6 +271,8 @@ define word_final as (
       '{e'}s'
       'ez'
         (<- '{e}')
+      '{e'}er'
+        (<- '{e}{i}{e}')
       'o'
       'os'
         (<- '{o}')
@@ -268,6 +296,7 @@ define word_final as (
       'ue'
         (<- '{y}{long}')
       'ie'
+      'ies'
       'is'
       'iz'
       'ix'
@@ -283,6 +312,12 @@ define word_final as (
       'e'
       'es'
       (delete)
+      'gue'
+      'gues'
+        (<- '{g}')
+      'enner'
+      'ennez'
+        (<- '{eps}{n}{e}')
       'ment'
       'ments'
       'ement'
@@ -293,6 +328,9 @@ define word_final as (
       'emente'
       'ementes'
         (<- '{m}{scripta~}t')
+      'ville'
+      'villes'
+        (<- '{v}{i}{l}')
       'b' 'c' 'd' 'g' 'h' 'j' 'k' 'm' 'n' 'p' 's' 't' 'v' 'w' 'x' 'y' 'z'
         (delete)
     )
@@ -304,6 +342,8 @@ define phoneme as (
     or consonant_phoneme
     or vowel_phoneme
   )
+
+// TODO: multi word
 
 define phonemize as (
     exceptions 

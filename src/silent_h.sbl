@@ -85,16 +85,15 @@ define silent_h as (
       'h{u^}s'
       'hy'
       'h{y^}'
-        ()
+        (delete)
       'heu'
       'heur'
       'honme'
       'homme'
       'honneu'
       'h{o^}te'
-        (atlimit)
+        (atlimit delete)
     )
-    delete
   )
   or
   (

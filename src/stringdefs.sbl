@@ -94,7 +94,11 @@ stringdef j         'j'
 groupings (
   ipa_consonants
   ipa_vowels
+  ipa_oral_vowels
+  ipa_nasal_vowels
 )
 
 define ipa_consonants '{b}{d}{f}{g}{h}{k}{l}{m}{n}{p}{r}{s}{t}{v}{z}{esh}{ezh}{ich}{eth}{gn}'
-define ipa_vowels '{a}{e}{i}{I}{j}{o}{u}{y}{w}{scripta}{eps}{openo}{oe}{o`}{a~}{e~}{o~}{scripta~}{openo~}{eps~}{o`~}{long}'
+define ipa_oral_vowels '{a}{e}{i}{I}{j}{o}{u}{y}{w}{scripta}{eps}{openo}{oe}{o`}'
+define ipa_nasal_vowels '{a~}{e~}{o~}{scripta~}{openo~}{eps~}{o`~}'
+define ipa_vowels ipa_oral_vowels + ipa_nasal_vowels + '{long}'
