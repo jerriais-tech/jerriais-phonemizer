@@ -28,6 +28,7 @@ define pre_word as (
     'd{'}' (<- '{d}')
     'm{'}' (<- '{m}')
     'n{'}' (<- '{n}')
+    'qu{'}' (<- '{k}')
   )
 )
 
@@ -52,10 +53,10 @@ define exceptions as (
       'sept' (<- '{s}{eps}{t}')
       'corps' (<- '{k}{openo}{r}')
       'j{e'}tho' (<- '{j}{eps}{t}{openo}')
-      'eus' 'eut' (<- '{u}')
-      'e{u^}nmes' (<- '{u}{long}{m}')
-      'e{u^}tes' 'e{u^}tent' (<- '{u}{long}{t}')
-      'e{u^}dres' 'e{u^}drent' (<- '{u}{long}{d}{r}')
+      'eus' 'eut' (<- '{y}')
+      'e{u^}nmes' (<- '{y}{long}{m}')
+      'e{u^}tes' 'e{u^}tent' (<- '{y}{long}{t}')
+      'e{u^}dres' 'e{u^}drent' (<- '{y}{long}{d}{r}')
       'guy' (<- '{g}{y}{j}')
       'biguesse' (<- '{b}{i}{g}{eps}{s}')
       'onguenn' (<- '{o~}{g}{scripta~}{n}')
@@ -73,10 +74,8 @@ define word_initial as (
   ([ 'th' ] <- '{t}')
   or ([ try 'l' ('y' or 'i') ] test vowels <- '{j}')
   or (['tu{'}'] test vowels <- '{t}{w}')
-  or (['ex' try ('c' test soft_vowels)] <- '{eps}{k}{s}')
+  or ([('ex' or 'x-') try ('c' test soft_vowels)] <- '{eps}{k}{s}')
 )
-
-// TODO: entr
 
 define silent_l as (
   // l after certain consonants
@@ -159,8 +158,9 @@ define consonant_phoneme as (
       'w' ()
       'x' (<- '{z}')
       'z' (<- '{z}')
-      '{'}' '-' (delete)
+      '{'}' (delete)
       ' ' ()
+      '-' (<- ' ')
     )
 )
 
@@ -213,7 +213,7 @@ define vowel_phoneme as (
     'ainem' 'einem' (<- '{eps}{n}{m}')
     'ent' 'ant' (
       (
-        test (vowels or 'ch')
+        test (vowels or 'ch' or 'r')
         <- '{scripta~}{t}'
         test try (
           [ 'e' ]
@@ -255,8 +255,11 @@ define word_final as (
     // Remove this when multi-word is implemented
     (atlimit or test '-')
     among (
+      '-t-i{'}' (<- ' {t}{i}')
       'ai' 'ais' 'er'
         (<- '{e}')
+      'aim'
+        (<- '{eps~}')
       'aye'
         (<- '{e}{i}')
       'et' 'ets'
@@ -296,6 +299,8 @@ define word_final as (
         (<- '{o}')
       'oue'
         (<- '{u}{long}')
+      '-ous'
+        (<- '{u}')
       'ien'
       '{i"}en'
         (
@@ -357,8 +362,8 @@ define word_final as (
 define phoneme as ( 
     word_final
     or mid_word_exceptions
-    or consonant_phoneme
     or vowel_phoneme
+    or consonant_phoneme
   )
 
 // TODO: multi word

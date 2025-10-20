@@ -1,5 +1,5 @@
 input,expected_output
-a-t-i',ati
+a-t-i',a ti
 allemand,almɑ̃
 abafoue,abafuː
 abafouîssent,abafwiːs
@@ -11,7 +11,7 @@ accidentellement,aksidɑ̃tɛlmɑ̃
 aime,eim
 aiment,eim
 affliouer,afjue
-avaû-sé,avousɛ
+avaû-sé,avou sɛ
 angliais,ɑ̃gje
 attrapent,atrap
 baue,bouː
@@ -43,6 +43,7 @@ d'senchantement,dsɑ̃ʃɑ̃tmɑ̃
 d'senchanter,dsɑ̃ʃɑ̃te
 êblioui,eibjui
 embarrassant,ɑ̃barasɑ̃
+entre,ɑ̃tr
 finnement,fInmɑ̃
 flieur,fjœr
 fliaue,fjouː
