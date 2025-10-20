@@ -41,8 +41,6 @@ define consonants 'bc{cc}dfghjklmnpqrstvwxz'
 
 define vowels_without_y vowels - y_any
 
-// TODO: j' t' m' d' etc
-
 /* special characters - IPA */
 
 stringdef b     'b'

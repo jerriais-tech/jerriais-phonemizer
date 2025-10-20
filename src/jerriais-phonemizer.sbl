@@ -10,10 +10,25 @@ routines (
   consonant_phoneme
   vowel_phoneme
   silent_l
+  pre_word
   word_initial
   word_final
   mid_word_exceptions
   delete_soft_e
+)
+
+define pre_word as (
+  [substring]
+  among (
+    'j{'}' (<- '{ezh}')
+    't{'}' (<- '{t}')
+    's{'}' (<- '{s}')
+    'l{'}' (<- '{l}')
+    'li{'}' (<- '{l}{i}')
+    'd{'}' (<- '{d}')
+    'm{'}' (<- '{m}')
+    'n{'}' (<- '{n}')
+  )
 )
 
 define exceptions as (
@@ -58,7 +73,10 @@ define word_initial as (
   ([ 'th' ] <- '{t}')
   or ([ try 'l' ('y' or 'i') ] test vowels <- '{j}')
   or (['tu{'}'] test vowels <- '{t}{w}')
+  // or (['ex' try ('c' test soft_vowels)] <- '{eps}{k}{s}')
 )
+
+// TODO: entr
 
 define silent_l as (
   // l after certain consonants
@@ -185,7 +203,7 @@ define vowel_phoneme as (
     '{o"}u' ((test vowels <- '{w}') or <- '{u}')
     'o{u^}' (<- '{u}{long}')
     'oeu' (<- '{oe}')
-    '{o^}n' '{o^}{m}' (<- '{o~}')
+    '{o^}n' (<- '{o~}')
     'on' ((test vowels <- '{openo}{n}') or <- '{o~}')
     'om' ((test vowels <- '{openo}{m}') or <- '{o~}')
     'onn' (<- '{o}{n}')
@@ -346,6 +364,7 @@ define phoneme as (
 // TODO: multi word
 
 define phonemize as (
+    repeat pre_word
     exceptions 
     or 
     silent_nt
