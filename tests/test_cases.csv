@@ -1,5 +1,6 @@
 input,expected_output
 allemand,almɑ̃
+abafoue,abafuː
 abafouîssent,abafwiːs
 abandonnement,abɑ̃donmɑ̃
 abandonner,abɑ̃done
@@ -16,12 +17,13 @@ bibliothèque,bibjɔtɛk
 bieau,bjou
 bliaûmer,bjoume
 blioûtinne,bjuːtIn
-bliuâtre,bjyɑtr
+bliuâtre,bjyɑːtr
 bliue,bjyː
 bliui,bjui
 bouôn,bwõ
 charmant,ʃarmɑ̃
 charmante,ʃarmɑ̃t
+chronique,krɔnik
 comment,komɑ̃
 coutchieaux,kutʃjouː
 chinnetèrre,ʃIntɛːr
@@ -37,6 +39,7 @@ dribblier,dribje
 d'senchantement,dsɑ̃ʃɑ̃tmɑ̃
 d'senchanter,dsɑ̃ʃɑ̃te
 êblioui,eibjui
+embarrassant,ɑ̃barasɑ̃
 finnement,fInmɑ̃
 flieur,fjœr
 fliaue,fjouː
@@ -74,6 +77,7 @@ pliaiche,pjeiʃ
 pliaie,pjei
 pliaîsi,pjeizi
 pliaît,pjei
+promettre,prɔmɛtr
 quément,kɛmɑ̃
 radgioacti,radʒjɔakti
 rapinneusement,rapInœzmɑ̃
@@ -83,8 +87,9 @@ r'tchiyant,rtʃijɑ̃
 reue,rœː
 spéciaûté,spɛsjoutɛ
 strasbourgeouais,strasburʒwe
-supplyicâtion,sypjikɑsjõ
+supplyicâtion,sypjikɑːsjõ
 tabl'ye,tabj
+tâsse,tɑːs
 tchilliaîthon,tʃijieiðõ
 tchinnepé,tʃInpɛ
 tchînzièmement,tʃẽzjɛmmɑ̃
