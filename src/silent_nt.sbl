@@ -1,8 +1,8 @@
 routines (
-  test_pronounce_nt  
+  silent_nt  
 )
 
-define test_pronounce_nt as (
+define silent_nt as (
   do backwards (
     [ 'nt' ]
     'e'

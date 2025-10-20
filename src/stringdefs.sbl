@@ -1,0 +1,100 @@
+stringescapes {}
+
+/* special characters - Jèrriais */
+
+stringdef a^   '{U+00E2}'  // a-circumflex
+stringdef a`   '{U+00E0}'  // a-grave
+stringdef cc   '{U+00E7}'  // c-cedilla
+
+stringdef e"   '{U+00EB}'  // e-diaeresis (rare)
+stringdef e'   '{U+00E9}'  // e-acute
+stringdef e^   '{U+00EA}'  // e-circumflex
+stringdef e`   '{U+00E8}'  // e-grave
+stringdef i"   '{U+00EF}'  // i-diaeresis
+stringdef i^   '{U+00EE}'  // i-circumflex
+stringdef o^   '{U+00F4}'  // o-circumflex
+stringdef o"   '{U+00F6}'  // o-diaresis (rare)
+stringdef u^   '{U+00FB}'  // u-circumflex
+stringdef u`   '{U+00F9}'  // u-grave
+stringdef y^   '{U+0177}'  // y-grave
+
+groupings (
+  vowels 
+  consonants 
+  e_any 
+  i_any 
+  y_any 
+  hard_vowels 
+  soft_vowels
+  vowels_without_y
+)
+
+define e_any 'e{e"}{e'}{e^}{e`}'
+define i_any 'i{i"}{i^}'
+define y_any 'y{y^}'
+
+define soft_vowels e_any + i_any + y_any
+define hard_vowels 'a{a^}{a`}o{o^}u{u^}{u`}'
+
+define vowels hard_vowels + soft_vowels
+define consonants 'bc{cc}dfghjklmnpqrstvwxz'
+
+define vowels_without_y vowels - y_any
+
+// TODO: j' t' m' d' etc
+
+/* special characters - IPA */
+
+stringdef b     'b'
+stringdef d     'd'
+stringdef f     'f'
+stringdef g     'g'
+stringdef h     'h'
+stringdef k     'k'
+stringdef l     'l'
+stringdef m     'm'
+stringdef n     'n'
+stringdef p     'p'
+stringdef r     'r'
+stringdef s     's'
+stringdef t     't'
+stringdef v     'v'
+stringdef z     'z'
+stringdef esh   '{U+0283}'  // ʃ
+stringdef ezh   '{U+0292}'  // ʒ
+stringdef ich   '{U+00E7}'  // ç
+stringdef eth   '{U+00F0}'  // ð
+stringdef gn    '{U+0272}'  // ɲ
+
+stringdef a         'a'
+stringdef e         'e'
+stringdef i         'i'
+stringdef I         'I'
+stringdef o         'o'
+stringdef u         'u'
+stringdef y         'y'
+stringdef scripta   '{U+0251}'          // ɑ
+stringdef eps       '{U+025B}'          // ɛ
+stringdef openo     '{U+0254}'          // ɔ
+stringdef oe        '{U+0153}'          // œ
+stringdef o`        '{U+00F8}'          // ø
+stringdef a~        '{U+00E3}'          // ã
+stringdef e~        '{U+1EBD}'          // ẽ
+stringdef o~        '{U+00F5}'          // õ
+stringdef tilde     '{U+0303}'          // combining ~
+stringdef scripta~  '{scripta}{tilde}'  // ɑ̃
+stringdef openo~    '{openo}{tilde}'    // ɔ̃
+stringdef eps~      '{eps}{tilde}'      // ɛ̃
+stringdef o`~       '{o`}{tilde}'       // ø̃
+stringdef long      '{U+02D0}'          // ː
+// Technically consonants, but for our purposes these are vowels
+stringdef w         'w'
+stringdef j         'j'
+
+groupings (
+  ipa_consonants
+  ipa_vowels
+)
+
+define ipa_consonants '{b}{d}{f}{g}{h}{k}{l}{m}{n}{p}{r}{s}{t}{v}{z}{esh}{ezh}{ich}{eth}{gn}'
+define ipa_vowels '{a}{e}{i}{I}{j}{o}{u}{y}{w}{scripta}{eps}{openo}{oe}{o`}{a~}{e~}{o~}{scripta~}{openo~}{eps~}{o`~}{long}'
