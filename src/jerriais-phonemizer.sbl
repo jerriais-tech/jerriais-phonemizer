@@ -19,14 +19,11 @@ routines (
   mid_word_exceptions
   delete_soft_e
   test_atlimit
-//  test_before_vowel
-//  test_not_before_vowel
+  oralize
 )
 
 define test_atlimit as atlimit
-
-//define test_before_vowel as (test vowels)
-//define test_not_before_vowel as (not test vowels)
+define oralize as ( test (vowels or '{'}') )
 
 define pre_word as (
   [substring]
@@ -41,6 +38,7 @@ define pre_word as (
     'n{'}' (<- '{n}')
     'qu{'}' (<- '{k}')
     'tu{'}' ((test ('ou' vowels) <- '{t}') or <- '{t}{w}')
+    'ch{'}' (<- '{esh}')
   )
 )
 
@@ -51,9 +49,11 @@ define exceptions as (
     'x' test_atlimit (<- '{eps}{k}{s}')
     'les' test_atlimit (<- '{l}{e}')
     'des' test_atlimit (<- '{d}{e}')
+    'en' test_atlimit 'en{'}' (<- '{scripta~}')
     'hie' test_atlimit (<- '{i}{long}')
     'guy' ((atlimit <- '{g}{y}') or <- '{g}{y}{j}')
-    'v{i^}ngt' ((try 's' atlimit <- '{v}{e~}' ['s'] delete) or <- '{v}{e~}t')
+    'v{i^}ngt' ((atlimit <- '{v}{e~}') or <- '{v}{e~}t')
+    'v{i^}ngts' (<- '{v}{e~}')
     'ville' (<- '{v}{i}{l}')
     'mille' (<- '{m}{i}{l}')
     'biblioth{e`}que' (<- '{b}{i}{b}{j}{openo}{t}{eps}{k}')
@@ -61,7 +61,7 @@ define exceptions as (
     'sept' (<- '{s}{eps}{t}')
     'corps' (<- '{k}{openo}{r}')
     'j{e'}tho' (<- '{j}{eps}{t}{openo}')
-    'eus' 'eut' (<- '{y}')
+    'eus' 'eut' test_atlimit (<- '{y}')
     'e{u^}nmes' (<- '{y}{long}{m}')
     'e{u^}tes' 'e{u^}tent' (<- '{y}{long}{t}')
     'e{u^}dres' 'e{u^}drent' (<- '{y}{long}{d}{r}')
@@ -102,8 +102,8 @@ define mid_word_exceptions as (
   or (
     [substring] among (
       'temps' (<- '{t}{a~}')
+      'femm' (<- '{f}{scripta~}{m}')
       'llem' (<- '{l}{m}')
-      'aill{'}' (<- '{scripta}{l}')
       '{e`}rr' (<- '{eps}{long}{r}')
       'tion' (<- '{s}{j}{o~}')
     )
@@ -127,10 +127,8 @@ define consonant_phoneme as (
       'c{'}c' (<- '{s}{s}')
       'ce{'}' (<- '{s}')
       'ch' (<- '{esh}')
-      'ch{'}ch' (<- '{esh}{esh}')
       'chr' (<- '{k}{r}')
       'd' 'dd' (<- '{d}')
-      'd{'}d' (<- '{d}{d}')
       'dg' (<- '{d}{ezh}')
       'f' 'ff' (<- '{f}')
       'g' ((test (soft_vowels or '{'}') <- '{ezh}' delete_soft_e) or <- '{g}')
@@ -145,79 +143,46 @@ define consonant_phoneme as (
       'm' 'mm' (<- '{m}')
       'n' 'nn' (<- '{n}')
       'gn' (<- '{gn}')
-      'n{'}n' (<- '{n}{n}')
       'p' 'pp' (<- '{p}')
       'qu' 'cqu' (<- '{k}')
       'r' 'rr' (<- '{r}')
-      'rr{'}r' (<- '{r}{r}')
-      's' ((reverse ('s' try '{long}' ipa_oral_vowels) test vowels <- '{z}') or <- '{s}')
+      's' ((test vowels reverse ('s' try '{long}' ipa_oral_vowels) <- '{z}') or <- '{s}')
       'ss' (<- '{s}')
       'sc' ((test soft_vowels <- '{s}') or <- '{s}{k}')
-      's{'}s' (<- '{s}{s}')
       't' 'tt' (<- '{t}')
-      't{'}t' (<- '{t}{t}')
       'tch' (<- '{t}{esh}')
       'th' (<- '{eth}')
-      'th{'}th' (<- '{eth}{eth}')
       'v' ()
       'w' ()
       'x' (<- '{z}')
       'z' (<- '{z}')
-      '{'}' '-' (delete)
-      ' ' ()
+      '{'}' (delete)
     )
 )
 
 
 define vowel_phoneme as (
   [substring] among (
+
+    // Plain vowels
     'a' '{a`}' (<- '{a}')
-    '{a^}' (<- '{scripta}{long}')
-    'ai' 'a{i^}' (<- '{e}{i}')
-    'au' 'a{u^}' (<- '{o}{u}')
-    'en' '{e"}n' (<- '{scripta~}')
-    'em' '{e"}m' (<- '{scripta~}')
-    'an' ((test vowels <- 'an') or <- '{scripta~}')
-    'ann' (<- '{scripta}{n}')
-    // TODO: oralize before vowel
-    // 'am' ((test vowels <- 'am') or <- '{scripta~}')
-    // 'amn' (<- '{scripta}{n}')
-    'ain' 'ein' ((test vowels <- '{eps}{n}') or <- '{eps~}')
-    'aill' (<- '{scripta}{long}{j}')
-    'aill{'}l' (<- '{scripta}{long}{j}{j}')
-    'ayi' (<- '{e}{long}{j}{i}')
     'e' '{e'}' '{e`}' 'ei' (<- '{eps}')
     '{e'}e' (<- '{e}')
-    '{e^}' (<- '{e}{i}')
-    'e{i^}' (<- '{eps}{long}')
-    'eu' (<- '{oe}')
-    'e{u^}' (<- '{oe}{long}')
-    'eau' (<- '{o}{u}')
-    'enn' 'enne' (<- '{eps}{n}')
-    'eill' (<- '{e}{j}')
-    'eill{'}l' (<- '{e}{long}{j}{j}')
+    'i' ((test vowels_without_y reverse ('i' ipa_consonants) <- '{j}') or <- '{i}')
     '{i"}' 'y' ((test vowels_without_y <- '{j}') or <- '{i}')
-    '{i^}' '{y^}' (<- '{i}{long}')
-    'in' '{i^}n' (<- '{e~}')
-    'inn' (
-      <- '{I}{n}'
-      test try (
-        [ 'e' ]
-        ('m' or 'p' or ('t' e_any))
-        delete
-      )
-    )
     'o' (<- '{openo}')
+    'u' '{u`}' '{u"}' (<- '{y}')
+
+    // Long vowels
+    '{a^}' (<- '{scripta}{long}')
+    '{e^}' (<- '{e}{i}')
+    '{i^}' '{y^}' (<- '{i}{long}')
     '{o^}' (<- '{o}{u}')
-    '{o"}u' ((test vowels <- '{w}') or <- '{u}')
-    'o{u^}' (<- '{u}{long}')
-    'oeu' (<- '{oe}')
-    '{o^}n' (<- '{o~}')
-    'on' ((test vowels <- '{openo}{n}') or <- '{o~}')
-    'om' ((test vowels <- '{openo}{m}') or <- '{o~}')
-    'onn' (<- '{o}{n}')
-    'onnem' (<- '{o}{n}{m}')
-    'omm' (<- '{o}{m}')
+    '{u^}' (<- '{y}{long}')
+
+    // Nasal (& exceptions)
+    'an' ((test oralize <- '{a}{n}') or <- '{scripta~}')
+    'ain' 'ein' ((test oralize <- '{eps}{n}') or <- '{eps~}')
     'aine' 'eine' 'ainne' 'einne' (<- '{eps}{n}')
     'ainem' 'einem' (<- '{eps}{n}{m}')
     'ent' 'ant' (
@@ -232,17 +197,44 @@ define vowel_phoneme as (
       ) 
       or <- '{scripta~}'
     )
-    'u' '{u`}' '{u"}' (<- '{y}')
-    '{u^}' (<- '{y}{long}')
-    'ueu' (<- '{w}{oe}')
-    'ui' (<- '{u}{i}')
-    'u{i^}' (<- '{u}{i}{long}')
-    'u{i^}n' (<- '{u}{e~}')
+    'en' '{e"}n' ((test oralize or 'ne' or 'n' ] <- '{eps}{n}') or <- '{scripta~}')
+    'em' '{e"}m' ((test oralize or 'm' ] <- '{eps}{m}') or <- '{scripta~}')
+    'in' '{i^}n' (<- '{e~}')
+    'inn' (
+      <- '{I}{n}'
+      test try (
+        [ 'e' ]
+        ('m' or 'p' or ('t' e_any))
+        delete
+      )
+    )
+    '{o^}n' (<- '{o~}')
+    'on' ((test oralize <- '{openo}{n}') or <- '{o~}')
+    'om' ((test oralize <- '{openo}{m}') or <- '{o~}')
+    'onn' (<- '{o}{n}')
+    'onnem' (<- '{o}{n}{m}')
+    'omm' (<- '{o}{m}')
     'un' 'um' (<- '{o`~}')
     'unn' (<- '{u}{n}')
     'umm' (<- '{u}{m}')
+
+    // Diphthongs
+    'ai' 'a{i^}' (<- '{e}{i}')
+    'au' 'a{u^}' (<- '{o}{u}')
+    'eau' (<- '{o}{u}')
+    'ui' (<- '{u}{i}')
+    'ueu' (<- '{w}{oe}')
+    'u{i^}' (<- '{u}{i}{long}')
+    'u{i^}n' (<- '{u}{e~}')
     'yi' (<- '{j}{i}')
-    'i' ((reverse ('i' ipa_consonants) test vowels_without_y <- '{j}') or <- '{i}')
+
+    // Other combinations
+    'ayi' (<- '{e}{long}{j}{i}')
+    'e{i^}' (<- '{eps}{long}')
+    'eu' (<- '{oe}')
+    'e{u^}' (<- '{oe}{long}')
+    'o{u^}' (<- '{u}{long}')
+    'oeu' (<- '{oe}')
     'ou' (
       (
         reverse (
@@ -254,6 +246,13 @@ define vowel_phoneme as (
       )
       or <- '{u}'
     )
+    '{o"}u' ((test vowels <- '{w}') or <- '{u}')
+
+    // Soft L
+    'aill' (<- '{scripta}{long}{j}' try (['{'}l'] <- '{j}'))
+    'aill{'}' (<- '{scripta}{l}')
+    'eill' (<- '{e}{j}')
+    'eill{'}l' (<- '{e}{long}{j}{j}')
     'ill' ((reverse ('ill' try '{long}' ipa_vowels)  <- '{j}') or <- '{i}{j}')
     'ill{'}l' ((reverse ('ill{'}' try '{long}' ipa_vowels)  <- '{j}{j}') or <- '{i}{j}{j}')
   )
@@ -263,7 +262,6 @@ define word_final as (
     [substring] 
     atlimit
     among (
-      '-t-i{'}' (<- ' {t}{i}')
       'ai' 'ais' 'er'
         (<- '{e}')
       'aim'
@@ -299,7 +297,7 @@ define word_final as (
         (<- '{e}{i}')
       'eyen'
       'a{i"}en'
-        (<- '{e}{i}{eps~}')
+        (<- '{e}{j}{eps~}')
       '{e'}s'
       'ez'
         (<- '{e}')
@@ -365,7 +363,7 @@ define word_final as (
       'ville'
       'villes'
         (<- '{v}{i}{l}')
-      'b' 'c' 'd' 'g' 'h' 'j' 'k' 'm' 'n' 'p' 's' 't' 'v' 'w' 'x' 'y' 'z'
+      'b' 'c' 'd' 'g' 'h' 'j' 'm' 'n' 'p' 's' 't' 'v' 'w' 'x' 'y' 'z'
         (delete)
     )
 )
