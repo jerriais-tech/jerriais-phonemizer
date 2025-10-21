@@ -1,4 +1,9 @@
-routines ( silent_h )
+routines ( silent_h remove_h )
+
+define remove_h as (
+  ([ 'hu' ] ('e' or 'i') <- '{w}')
+  or [ 'h' ] delete
+)
 
 define silent_h as (
   test ([ 'h' ])
@@ -79,27 +84,23 @@ define silent_h as (
       'hou{o^}'
       'houp{'}s{e'}'
       'houyie'
+      'hue'
       'hufer'
+      'hui'
       'hum'
       'hus'
       'h{u^}s'
       'hy'
       'h{y^}'
-        (delete)
+        ()
       'heu'
       'heur'
       'honme'
       'homme'
+      'hommes'
       'honneu'
       'h{o^}te'
-        (atlimit delete)
-    )
-  )
-  or
-  (
-    test substring 
-    among (
-      'hue' 'hui' (['hu'] <- '{w}')
+        (atlimit)
     )
   )
 )

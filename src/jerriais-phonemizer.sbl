@@ -22,6 +22,8 @@ routines (
   oralize
 )
 
+booleans ( next_word_begins_vowel )
+
 define test_atlimit as atlimit
 define oralize as ( test (vowels or '{'}') )
 
@@ -48,16 +50,20 @@ define exceptions as (
     // TODO: individual letters
     'x' test_atlimit (<- '{eps}{k}{s}')
     'les' test_atlimit (<- '{l}{e}')
+    'l{'}s' test_atlimit (<- '{l}{s}')
     'des' test_atlimit (<- '{d}{e}')
     'en' test_atlimit 'en{'}' (<- '{scripta~}')
+
+
     'hie' test_atlimit (<- '{i}{long}')
     'guy' ((atlimit <- '{g}{y}') or <- '{g}{y}{j}')
     'v{i^}ngt' ((atlimit <- '{v}{e~}') or <- '{v}{e~}t')
     'v{i^}ngts' (<- '{v}{e~}')
     'ville' (<- '{v}{i}{l}')
     'mille' (<- '{m}{i}{l}')
-    'biblioth{e`}que' (<- '{b}{i}{b}{j}{openo}{t}{eps}{k}')
+    'biblioth{e`}que' (<- '{b}{i}{b}{j}{o}{t}{eps}{k}')
     'hypoth{e`}que' (<- '{i}{p}{openo}{t}{eps}{k}')
+    'a{i^}siement' (<- '{e}{i}{z}{i}{m}{scripta~}')
     'sept' (<- '{s}{eps}{t}')
     'corps' (<- '{k}{openo}{r}')
     'j{e'}tho' (<- '{j}{eps}{t}{openo}')
@@ -76,7 +82,7 @@ define exceptions as (
 // TODO: Liasons
 
 define word_initial as (
-  try silent_h
+  try (silent_h remove_h)
   ([ 'th' ] <- '{t}')
   or ([ try 'l' ('y' or 'i') ] test vowels <- '{j}')
   or ([('ex' or 'x-') try ('c' test soft_vowels)] <- '{eps}{k}{s}')
@@ -168,8 +174,21 @@ define vowel_phoneme as (
     'a' '{a`}' (<- '{a}')
     'e' '{e'}' '{e`}' 'ei' (<- '{eps}')
     '{e'}e' (<- '{e}')
-    'i' ((test vowels_without_y reverse ('i' ipa_consonants) <- '{j}') or <- '{i}')
-    '{i"}' 'y' ((test vowels_without_y <- '{j}') or <- '{i}')
+    'i' (
+      (
+        test vowels_without_y
+        reverse ('i' ipa_consonants)
+        <- '{j}'
+      )
+      or <- '{i}'
+    )
+    '{i"}' 'y' (
+      (
+        test vowels_without_y
+        <- '{j}'
+      )
+      or <- '{i}'
+    )
     'o' (<- '{openo}')
     'u' '{u`}' '{u"}' (<- '{y}')
 
@@ -181,15 +200,30 @@ define vowel_phoneme as (
     '{u^}' (<- '{y}{long}')
 
     // Nasal (& exceptions)
-    'an' ((test oralize <- '{a}{n}') or <- '{scripta~}')
-    'ain' 'ein' ((test oralize <- '{eps}{n}') or <- '{eps~}')
-    'aine' 'eine' 'ainne' 'einne' (<- '{eps}{n}')
-    'ainem' 'einem' (<- '{eps}{n}{m}')
+    'an' (
+      (
+        test oralize
+        <- '{a}{n}'
+      )
+      or <- '{scripta~}'
+    )
+    'ain' 'ein' (
+      (
+        ('n' ]) or test oralize
+        <- '{eps}{n}'
+        do (
+          [ 'e' ]
+          ('l' or 'd' or 'r')
+          delete
+        )
+      )
+      or <- '{eps~}'
+    )
     'ent' 'ant' (
       (
         test (vowels or 'ch' or 'r')
         <- '{scripta~}{t}'
-        test try (
+        do (
           [ 'e' ]
           ('m' or 'p')
           delete
@@ -197,26 +231,68 @@ define vowel_phoneme as (
       ) 
       or <- '{scripta~}'
     )
-    'en' '{e"}n' ((test oralize or 'ne' or 'n' ] <- '{eps}{n}') or <- '{scripta~}')
-    'em' '{e"}m' ((test oralize or 'm' ] <- '{eps}{m}') or <- '{scripta~}')
-    'in' '{i^}n' (<- '{e~}')
-    'inn' (
-      <- '{I}{n}'
-      test try (
-        [ 'e' ]
-        ('m' or 'p' or ('t' e_any))
-        delete
+    'en' '{e"}n' (
+      (
+        ('ne' or 'n' ]) or test oralize
+        <- '{eps}{n}'
       )
+      or <- '{scripta~}'
+    )
+    'em' '{e"}m' (
+      (
+        ('m' ]) or test oralize
+        <- '{eps}{m}'
+      )
+      or <- '{scripta~}'
+    )
+    'in' (
+      (
+        ('n' ]) or test oralize
+        <- '{I}{n}'
+        do (
+          [ 'e' ]
+          ('m' or 'p' or ('t' e_any))
+          delete
+        )
+      )
+      or <- '{e~}'
+    )
+    '{i^}n' (<- '{e~}')
+    'on' (
+      (
+        ('n' ]) or test oralize
+        <- '{openo}{n}'
+        do (
+          [ 'e' ]
+          'm'
+          delete
+        )
+      )
+      or <- '{o~}'
+      try ([ 'h' ] <- '{n}')
     )
     '{o^}n' (<- '{o~}')
-    'on' ((test oralize <- '{openo}{n}') or <- '{o~}')
-    'om' ((test oralize <- '{openo}{m}') or <- '{o~}')
-    'onn' (<- '{o}{n}')
-    'onnem' (<- '{o}{n}{m}')
-    'omm' (<- '{o}{m}')
-    'un' 'um' (<- '{o`~}')
-    'unn' (<- '{u}{n}')
-    'umm' (<- '{u}{m}')
+    'om' (
+      (
+        ('m' ]) or test oralize
+        <- '{openo}{m}'
+      )
+      or <- '{o~}'
+    )
+    'un' (
+      (
+        ('n' ]) or test oralize
+        <- '{y}{n}'
+      )
+      or <- '{o`~}'
+    )
+    'um' (
+      (
+        ('m' ]) or test oralize
+        <- '{y}{m}'
+      )
+      or <- '{o`~}'
+    )
 
     // Diphthongs
     'ai' 'a{i^}' (<- '{e}{i}')
@@ -239,7 +315,7 @@ define vowel_phoneme as (
       (
         reverse (
           'ou' 
-          (ipa_consonants or (try '{long}' ipa_nasal_vowels) or atlimit)
+          (atlimit or ipa_consonants or (try '{long}' ipa_nasal_vowels))
         ) 
         test vowels 
         <- '{w}'
@@ -259,10 +335,10 @@ define vowel_phoneme as (
 )
 
 define word_final as (
-    [substring] 
+    [substring try 's']
     atlimit
     among (
-      'ai' 'ais' 'er'
+      'ai' 'er'
         (<- '{e}')
       'aim'
         (<- '{eps~}')
@@ -275,7 +351,6 @@ define word_final as (
       'au' 'aus'
         (<- '{o}{u}')
       'aue'
-      'aues'
       'aux'
       'eaux'
         (<- '{o}{u}{long}')
@@ -288,28 +363,24 @@ define word_final as (
       'euse'
         (<- '{oe}{long}{z}')
       '{e'}e'
-      '{e'}es'
         (<- '{e}') // TODO: long
       'ait'
       'aient'
       'aie'
-      'aies'
         (<- '{e}{i}')
       'eyen'
       'a{i"}en'
         (<- '{e}{j}{eps~}')
       '{e'}s'
       'ez'
+      'est'
         (<- '{e}')
       '{e'}er'
         (<- '{e}{j}{e}')
       'o'
-      'os'
         (<- '{o}')
       'oue'
         (<- '{u}{long}')
-      '-ous'
-        (<- '{u}')
       'ien'
       '{i"}en'
         (
@@ -320,7 +391,6 @@ define word_final as (
           or <- '{i}{eps~}'
         )
       'inne'
-      'innes'
         (<- '{I}{n}')
       'it'
       'id'
@@ -328,7 +398,6 @@ define word_final as (
       'ue'
         (<- '{y}{long}')
       'ie'
-      'ies'
       'is'
       'iz'
       'ix'
@@ -336,32 +405,23 @@ define word_final as (
       'ids'
         (<- '{i}{long}')
       'eue'
-      'eues'
         (<- '{oe}{long}')
       'ye'
-      'yes'
         (<- '{i}')
       'e'
-      'es'
       (delete)
       'gue'
-      'gues'
         (<- '{g}')
       'enner'
       'ennez'
         (<- '{eps}{n}{e}')
       'ment'
-      'ments'
       'ement'
-      'ements'
         (<- '{m}{scripta~}')
       'mente'
-      'mentes'
       'emente'
-      'ementes'
         (<- '{m}{scripta~}t')
       'ville'
-      'villes'
         (<- '{v}{i}{l}')
       'b' 'c' 'd' 'g' 'h' 'j' 'm' 'n' 'p' 's' 't' 'v' 'w' 'x' 'y' 'z'
         (delete)
@@ -376,9 +436,7 @@ define phoneme as (
   )
 
 define phonemize_word as (
-    repeat pre_word
-    exceptions 
-    or 
+    repeat (exceptions or pre_word)
     silent_nt
     try word_initial
     repeat phoneme
@@ -387,48 +445,54 @@ define phonemize_word as (
 strings ( suffix )
 
 define exceptions_with_hyphens as (
-  backwards (
-    [substring]
-    among (
-      '-t-i{'}'
-      '-t-alle'
-      '-ous'
-      '-ieune'
-      '-ieuni{e`}me'
+  do repeat (goto (['-s-']) <- 'z')
+  (
+    backwards (
+      [substring]
+      among (
+        '-t-i{'}'
+        '-t-alle'
+        '-ous'
+        '-ieune'
+        '-ieuni{e`}me'
+      )
+      -> suffix
     )
-    -> suffix
-  )
-  setlimit goto suffix for phonemize_word_with_hyphens
-  backwards (
-    [substring]
-    among (
-      '-t-i{'}' (<- '{t}{i}')
-      '-t-alle' (<- '{t}{a}{l}')
-      '-ous' (<- '{u}')
-      '-ieune' (<- '{j}{oe}{n}')
-      '-ieuni{e`}me' (<- '{j}{oe}{n}{j}{eps}{m}')
+    setlimit goto suffix for phonemize_word_with_hyphens
+    backwards (
+      [substring]
+      among (
+        '-t-i{'}' (<- '{t}{i}')
+        '-t-alle' (<- '{t}{a}{l}')
+        '-ous' (<- '{u}')
+        '-ieune' (<- '{j}{oe}{n}')
+        '-ieuni{e`}me' (<- '{j}{oe}{n}{j}{eps}{m}')
+      )
     )
+    tolimit
   )
-  tolimit
 )
 
 define phonemize_word_with_hyphens as (
   exceptions_with_hyphens or
   repeat (
      setlimit ((goto '-') or tolimit) for phonemize_word
-     goto '-'
-     ['-'] <- ' '
+     goto ['-'] <- ' '
   )
 )
 
 define phonemize as (
   do repeat (goto (not accepted_characters) [ next ] <- ' ')
   repeat (
-    setlimit ((goto ' ') or tolimit) for (
-      phonemize_word_with_hyphens
-    )
+    setlimit (
+      (goto ' ') or tolimit
+      do (
+        unset next_word_begins_vowel
+        ' '
+        vowels or (setlimit goto ' ' for silent_h)
+        set next_word_begins_vowel
+      )
+    ) for phonemize_word_with_hyphens
     gopast ' '
   )
 )
-
-// TODO: clean input
