@@ -16,6 +16,7 @@ stringdef o^   '{U+00F4}'  // o-circumflex
 stringdef o"   '{U+00F6}'  // o-diaresis (rare)
 stringdef u^   '{U+00FB}'  // u-circumflex
 stringdef u`   '{U+00F9}'  // u-grave
+stringdef u"   '{U+00FC}'  // u-diaeresis (rare)
 stringdef y^   '{U+0177}'  // y-grave
 
 groupings (
@@ -27,6 +28,8 @@ groupings (
   hard_vowels 
   soft_vowels
   vowels_without_y
+  accepted_punctuation
+  accepted_characters
 )
 
 define e_any 'e{e"}{e'}{e^}{e`}'
@@ -34,12 +37,16 @@ define i_any 'i{i"}{i^}'
 define y_any 'y{y^}'
 
 define soft_vowels e_any + i_any + y_any
-define hard_vowels 'a{a^}{a`}o{o^}u{u^}{u`}'
+define hard_vowels 'a{a^}{a`}o{o^}{o"}u{u^}{u`}{u"}'
 
 define vowels hard_vowels + soft_vowels
 define consonants 'bc{cc}dfghjklmnpqrstvwxz'
 
 define vowels_without_y vowels - y_any
+
+define accepted_punctuation '-{'} '
+
+define accepted_characters consonants + vowels + accepted_punctuation
 
 /* special characters - IPA */
 
