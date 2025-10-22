@@ -2,7 +2,7 @@ all: javascript python docs c c_example
 
 srcs = dist/c/phonemizer.c dist/c/examples/api.c dist/c/examples/phonemizewords.c dist/c/examples/utilities.c
 headers = dist/c/phonemizer.h dist/c/examples/api.h dist/c/examples/header.h
-sbl_src = src/jerriais-phonemizer.sbl src/stringdefs.sbl src/silent_nt.sbl src/silent_h.sbl
+sbl_src = src/jerriais-phonemizer.sbl src/stringdefs.sbl src/silent_nt.sbl src/silent_h.sbl src/liaison.sbl
 
 c_example: dist/c/phonemizewords
 

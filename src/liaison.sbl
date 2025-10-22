@@ -1,0 +1,39 @@
+routines ( liaison )
+
+define liaison as (
+  [substring]
+  atlimit
+  among (
+    'un' (<- '{o`~}{n}')
+    '{e`}s' (<- '{eps}{s}')
+    'les' (<- '{l}{eps}{s}')
+    'des' (<- '{d}{eps}{s}')
+    'en' (<- '{scripta~}{n}')
+
+    'ous' (<- '{u}{s}')
+    'mes' (<- '{m}{eps}{s}')
+    'tes' (<- '{t}{eps}{s}')
+    'lus' (<- '{l}{y}{s}')
+    'nos' (<- '{n}{o}{s}')
+    'vos' (<- '{v}{o}{s}')
+    'nouos' (<- '{n}{w}{o}{s}')
+    'vouos' (<- '{v}{w}{o}{s}')
+
+    'ch{'}t' (<- '{esh}{t}')
+    'ches' (<- '{esh}{eps}{s}')
+
+    'deux' (<- '{d}{oe}{s}')
+    'trais' (<- '{t}{r}{e}{s}')
+    'si{e^}x' (<- '{s}{j}{e}{i}{s}')
+    'dgi{e^}x' (<- '{d}{ezh}{j}{e}{i}{s}')
+    'v{i^}ngt' (<- '{v}{e~}{t}')
+    'sept' (<- '{s}{eps}{t}')
+    'huit' (<- '{w}{i}{t}')
+
+    // TODO: pus / mains
+    // tout à fait
+    // bein
+    // ch'est en tchi
+    // m'est avis
+  )
+)
