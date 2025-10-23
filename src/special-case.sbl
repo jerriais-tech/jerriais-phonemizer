@@ -1,0 +1,213 @@
+routines (
+  exceptions
+  exceptions_with_hyphens
+  pre_word
+  word_initial
+  silent_l
+  mid_word_exceptions
+  single_letter
+)
+
+define pre_word as (
+  [substring]
+  among (
+    'j{'}' (<- '{ezh}')
+    't{'}' (<- '{t}')
+    's{'}' (<- '{s}')
+    'l{'}' (<- '{l}')
+    'li{'}' (<- '{l}{i}')
+    'd{'}' (<- '{d}')
+    'm{'}' (<- '{m}')
+    'n{'}' (<- '{n}')
+    'qu{'}' (<- '{k}')
+    'tu{'}' ((test ('ou' vowels) <- '{t}') or <- '{t}{w}')
+    'ch{'}' (<- '{esh}')
+    'y{'}' (<- '{j}')
+  )
+)
+
+define single_letter as (
+  [substring] atlimit
+  among (
+    'a' (<- '{a}')
+    'b' (<- '{b}{e}')
+    'c' (<- '{s}{e}')
+    'd' (<- '{d}{e}')
+    'e' (<- '{oe}')
+    'f' (<- '{eps}{f}')
+    'g' (<- '{ezh}{e}')
+    'h' (<- '{openo}{esh}')
+    'i' ()
+    'j' (<- '{ezh}{i}')
+    'k' (<- '{k}{a}')
+    'l' (<- '{eps}{l}')
+    'm' (<- '{eps}{m}')
+    'n' (<- '{eps}{n}')
+    'o' (<- '{openo}')
+    'p' (<- '{p}{e}')
+    'q' (<- '{k}{y}')
+    'r' (<- '{eps}{r}')
+    's' (<- '{eps}{s}')
+    't' (<- '{t}{e}')
+    'u' (<- '{y}')
+    'v' (<- '{v}{e}')
+    'w' (<- '{d}{y}{b}{l}{j} {v}{e}')
+    'x' (<- '{eps}{k}{s}')
+    // Unfortunately this is a word!
+    'y' (<- '{i}')
+    'z' (<- '{z}{eps}{d}')
+  )
+)
+
+define exceptions as (
+  (must_liaise or may_liaise liaison)
+  or
+  (
+    [substring] atlimit
+    among (
+      'les' (<- '{l}{e}')
+      'des' (<- '{d}{e}')
+      'l{'}s' (<- '{l}{z}')
+      'd{'}s' (<- '{d}{z}')
+      'm{'}n' (<- '{m}{n}')
+      'm{e'}n' (<- '{m}{eps}{n}')
+      'm{'}s' (<- '{m}{z}')
+      'mes' (<- '{m}{eps}')
+      't{'}n' (<- '{t}{n}')
+      't{e'}n' (<- '{t}{eps}{n}')
+      'tes' (<- '{t}{eps}')
+      's{'}n' (<- '{s}{n}')
+      's{e'}n' (<- '{s}{eps}{n}')
+      'ses' (<- '{s}{eps}')
+      'ch{'}t' (<- '{esh}{t}')
+      'ch{'}t{'}' (<- '{esh}{t}')
+      'il' (<- '{i}{l}')
+
+      'x' (<- '{eps}{k}{s}')
+      'y' (<- '{i}')
+
+      'hie' (<- '{i}{long}')
+
+      'eus' 'eut' (<- '{y}')
+      'e{u^}nmes' (<- '{y}{long}{m}')
+      'e{u^}tes' 'e{u^}tent' (<- '{y}{long}{t}')
+      'e{u^}dres' 'e{u^}drent' (<- '{y}{long}{d}{r}')
+      'e{u^}sse' 'e{u^}ssent' (<- '{y}{long}{s}')
+      'e{u^}ssions' (<- '{y}{long}{s}{j}{o~}')
+      'e{u^}ssyiz' (<- '{y}{long}{s}{j}{i}')
+      'e{u^}ssiez' (<- '{y}{long}{s}{j}{e}')
+
+      '{e^}tions' (<- '{eps}{t}{j}{o~}')
+      '{'}tions' (<- '{t}{j}{o~}')
+    )
+  )
+  or
+  (
+    [substring]
+    among (
+      'guy' (
+        (atlimit <- '{g}{y}')
+        or <- '{g}{y}{j}'
+      )
+      'v{i^}ngt' (
+        try ('s'])
+        (atlimit <- '{v}{e~}')
+        or <- '{v}{e~}t'
+      )
+      'ville' (<- '{v}{i}{l}')
+      'mille' (<- '{m}{i}{l}')
+      'biblioth{e`}que' (<- '{b}{i}{b}{j}{o}{t}{eps}{k}')
+      'hypoth{e`}que' (<- '{i}{p}{openo}{t}{eps}{k}')
+      'a{i^}siement' (<- '{e}{i}{z}{i}{m}{scripta~}')
+      'sept' (<- '{s}{eps}{t}')
+      'corps' (<- '{k}{openo}{r}')
+      'j{e'}tho' (<- '{j}{eps}{t}{openo}')
+      'biguesse' (<- '{b}{i}{g}{eps}{s}')
+      'onguenn' (<- '{o~}{g}{scripta~}{n}')
+      'onguent' (<- '{o~}{g}{scripta~}')
+    )
+  )
+)
+
+define word_initial as (
+  try (silent_h remove_h)
+  ([ 'th' ] <- '{t}')
+  or ([ try 'l' ('y' or 'i') ] test vowels <- '{j}')
+  or ([('ex' or 'x-') try ('c' test soft_vowels)] <- '{eps}{k}{s}')
+)
+
+define silent_l as (
+  // l after certain consonants
+  (
+    test (substring among('f' 'ff' 'g' 'c' 'cc' 'b' 'bb' 'p' 'pp' ('l' y_any or i_any)))
+    consonant_phoneme 
+    ([ 'l' y_any try i_any ] <- '{j}{i}') or ([ 'l' i_any ] <- '{j}')
+  )
+  // l'ye after consonant
+  or (
+    test (consonants 'l{'}ye') consonant_phoneme [ 'l{'}ye' ] <- '{j}'
+  )
+  // treat as word initial following an apostrophe
+  or ( [ '{'}l' ('y' or 'i') ] test vowels <- '{j}')
+)
+
+define mid_word_exceptions as (
+  silent_l
+  or (
+    [substring] among (
+      'temps' (<- '{t}{a~}')
+      'femm' (<- '{f}{scripta~}{m}')
+      'llem' (<- '{l}{m}')
+      '{e`}rr' (<- '{eps}{long}{r}')
+      'tion' (<- '{s}{j}{o~}')
+    )
+  )
+)
+
+define exceptions_with_hyphens as (
+  do repeat (goto ([ '-s' ('-' or '{'}') ]) <- 'ze-')
+  setlimit goto (
+    test [substring] atlimit
+    among (
+      '-t-i{'}' (<- '{t}{i}')
+      '-t-alle' (<- '{t}{a}{l}')
+      '-ieune' (<- '{j}{oe}{n}')
+      '-ieuni{e`}me' (<- '{j}{oe}{n}{j}{eps}{m}')
+
+      '-t-en' (
+        (must_liaise or may_liaise <- '{t}{scripta~}{n}')
+        or <- '{t}{scripta~}'
+      )
+
+      '-i{'}' (
+        set must_liaise
+        <- '{i}'
+      )
+      '-alle' (
+        set must_liaise
+        <- '{a}{l}'
+      )
+      '-y' (
+        set must_liaise
+        <- '{i}'
+      )
+      '-ous' (
+        (must_liaise or may_liaise <- '{u}{z}')
+        or <- '{u}'
+        set must_liaise
+      )
+      '-ouos' (
+        (must_liaise or may_liaise <- '{w}{o}{z}')
+        or <- '{w}{o}'
+        set must_liaise
+      )
+      '-en' (
+        (must_liaise or may_liaise <- '{scripta~}{n}')
+        or <- '{scripta~}'
+        set must_liaise
+      )
+    )
+  ) for phonemize_word_with_hyphens
+  unset must_liaise
+  tolimit
+)

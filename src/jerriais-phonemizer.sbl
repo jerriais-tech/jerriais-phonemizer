@@ -1,506 +1,42 @@
-externals ( phonemize )
-
-get 'src/stringdefs.sbl'
-get 'src/silent_nt.sbl'
-get 'src/silent_h.sbl'
-get 'src/liaison.sbl'
+externals ( phonemize separator )
 
 routines (
   phonemize_word
   phonemize_word_with_hyphens
-  exceptions_with_hyphens
-  exceptions
   phoneme
-  consonant_phoneme
-  vowel_phoneme
-  silent_l
-  pre_word
-  word_initial
-  word_final
-  mid_word_exceptions
-  not_double_consonant
-  delete_silent_e
-  test_atlimit
-  oralize
   word_end
-  test_next_word_begins_vowel
+  test_liaison
 )
 
-booleans ( next_word_begins_vowel )
-
-define test_atlimit as atlimit
-define oralize as ( test (vowels or '{'}') )
-
-define pre_word as (
-  [substring]
-  among (
-    'j{'}' (<- '{ezh}')
-    't{'}' (<- '{t}')
-    's{'}' (<- '{s}')
-    'l{'}' (<- '{l}')
-    'li{'}' (<- '{l}{i}')
-    'd{'}' (<- '{d}')
-    'm{'}' (<- '{m}')
-    'n{'}' (<- '{n}')
-    'qu{'}' (<- '{k}')
-    'tu{'}' ((test ('ou' vowels) <- '{t}') or <- '{t}{w}')
-    'ch{'}' (<- '{esh}')
-  )
-)
-
-define exceptions as (
-  (next_word_begins_vowel liaison)
-  or
-  (
-    [substring]
-    among (
-      'les' test_atlimit (<- '{l}{e}')
-      'des' test_atlimit (<- '{d}{e}')
-      'l{'}s' test_atlimit (<- '{l}{s}')
-      'd{'}s' test_atlimit (<- '{d}{s}')
-      'm{'}s' test_atlimit (<- '{m}{s}')
-      'm{'}n' test_atlimit (<- '{m}{n}')
-      't{'}n' test_atlimit (<- '{t}{n}')
-      's{'}n' test_atlimit (<- '{s}{n}')
-      'm{e'}n' test_atlimit (<- '{m}{eps}{n}')
-      't{e'}n' test_atlimit (<- '{t}{eps}{n}')
-      's{e'}n' test_atlimit (<- '{s}{eps}{n}')
-      'il' test_atlimit (<- '{i}{l}')
-
-      // TODO: individual letters
-      'x' test_atlimit (<- '{eps}{k}{s}')
-
-      'hie' test_atlimit (<- '{i}{long}')
-      'guy' ((atlimit <- '{g}{y}') or <- '{g}{y}{j}')
-      'v{i^}ngt' ((atlimit <- '{v}{e~}') or <- '{v}{e~}t')
-      'v{i^}ngts' (<- '{v}{e~}')
-      'ville' (<- '{v}{i}{l}')
-      'mille' (<- '{m}{i}{l}')
-      'biblioth{e`}que' (<- '{b}{i}{b}{j}{o}{t}{eps}{k}')
-      'hypoth{e`}que' (<- '{i}{p}{openo}{t}{eps}{k}')
-      'a{i^}siement' (<- '{e}{i}{z}{i}{m}{scripta~}')
-      'sept' (<- '{s}{eps}{t}')
-      'corps' (<- '{k}{openo}{r}')
-      'j{e'}tho' (<- '{j}{eps}{t}{openo}')
-      'eus' 'eut' test_atlimit (<- '{y}')
-      'e{u^}nmes' (<- '{y}{long}{m}')
-      'e{u^}tes' 'e{u^}tent' (<- '{y}{long}{t}')
-      'e{u^}dres' 'e{u^}drent' (<- '{y}{long}{d}{r}')
-      'biguesse' (<- '{b}{i}{g}{eps}{s}')
-      'onguenn' (<- '{o~}{g}{scripta~}{n}')
-      'onguent' (<- '{o~}{g}{scripta~}')
-      // TODO: eûsse etc
-      // etions
-    )
-  )
-)
-
-define word_initial as (
-  try (silent_h remove_h)
-  ([ 'th' ] <- '{t}')
-  or ([ try 'l' ('y' or 'i') ] test vowels <- '{j}')
-  or ([('ex' or 'x-') try ('c' test soft_vowels)] <- '{eps}{k}{s}')
-)
-
-define silent_l as (
-  // l after certain consonants
-  (
-    test (substring among('f' 'ff' 'g' 'c' 'cc' 'b' 'bb' 'p' 'pp' ('l' y_any or i_any)))
-    consonant_phoneme 
-    ([ 'l' y_any try i_any ] <- '{j}{i}') or ([ 'l' i_any ] <- '{j}')
-  )
-  // l'ye after consonant
-  or (
-    test (consonants 'l{'}ye') consonant_phoneme [ 'l{'}ye' ] <- '{j}'
-  )
-  // treat as word initial following an apostrophe
-  or ( [ '{'}l' ('y' or 'i') ] test vowels <- '{j}')
-)
-
-define mid_word_exceptions as (
-  silent_l
-  or (
-    [substring] among (
-      'temps' (<- '{t}{a~}')
-      'femm' (<- '{f}{scripta~}{m}')
-      'llem' (<- '{l}{m}')
-      '{e`}rr' (<- '{eps}{long}{r}')
-      'tion' (<- '{s}{j}{o~}')
-    )
-  )
-)
-
-define not_double_consonant as (
-  test (consonants vowels) 
-  or test (consonants ('li' or 'ly'))
-  not test 'x'
-)
-
-define delete_silent_e as (
-    try (
-      ['e']
-      test ('o' or '{o^}' or 'a' or '{a^}' or not_double_consonant)
-      delete
-    )
-)
-
-define consonant_phoneme as (
-    [substring] among (
-      'b' 'bb' (<- '{b}')
-      '{cc}' (<- '{s}')
-      'c' ((test soft_vowels <- '{s}' delete_silent_e) or <- '{k}')
-      'cc' ((test soft_vowels <- '{k}{s}' delete_silent_e) or <- '{k}')
-      'c{'}c' (<- '{s}{s}')
-      'ce{'}' (<- '{s}')
-      'ch' (<- '{esh}')
-      'chr' (<- '{k}{r}')
-      'd' 'dd' (<- '{d}')
-      'dg' (<- '{d}{ezh}')
-      'f' 'ff' (<- '{f}')
-      'g' ((test (soft_vowels or '{'}') <- '{ezh}' delete_silent_e) or <- '{g}')
-      'gu' ((test (soft_vowels or '{'}') <- '{g}') or <- '{g}{y}')
-      'gue' (<- '{g}')
-      'h' ()
-      'j' (<- '{ezh}')
-      'k' ()
-      'l' 'll' 'l{'}ye' (<- '{l}')
-      'l{'}l' (<- '{l}{l}')
-      'lyi' (<- '{j}{i}')
-      'm' 'mm' (<- '{m}')
-      'n' 'nn' (<- '{n}')
-      'gn' (<- '{gn}')
-      'p' 'pp' (<- '{p}')
-      'qu' 'cqu' (<- '{k}')
-      'r' 'rr' (<- '{r}')
-      's' ((test vowels reverse ('s' try '{long}' ipa_oral_vowels) <- '{z}') or <- '{s}')
-      'ss' (<- '{s}')
-      'sc' ((test soft_vowels <- '{s}') or <- '{s}{k}')
-      't' 'tt' (<- '{t}')
-      'tch' (<- '{t}{esh}')
-      'th' (<- '{eth}')
-      'v' ()
-      'w' ()
-      'x' (<- '{z}')
-      'z' (<- '{z}')
-      '{'}' (delete)
-    )
-)
-
-
-define vowel_phoneme as (
-  [substring] among (
-
-    // Plain vowels
-    'a' '{a`}' (<- '{a}')
-    'e' '{e'}' '{e`}' 'ei' (<- '{eps}')
-    '{e'}e' (<- '{e}')
-    'i' (
-      (
-        test vowels_without_y
-        reverse ('i' ipa_consonants)
-        <- '{j}'
-      )
-      or <- '{i}'
-    )
-    '{i"}' 'y' (
-      (
-        test vowels_without_y
-        <- '{j}'
-      )
-      or <- '{i}'
-    )
-    'o' (<- '{openo}')
-    'u' '{u`}' '{u"}' (<- '{y}')
-
-    // Long vowels
-    '{a^}' (<- '{scripta}{long}')
-    '{e^}' (<- '{e}{i}')
-    '{i^}' '{y^}' (<- '{i}{long}')
-    '{o^}' (<- '{o}{u}')
-    '{u^}' (<- '{y}{long}')
-
-    // Nasal (& exceptions)
-    'an' (
-      (
-        ('n' ]) or test oralize
-        <- '{a}{n}'
-        delete_silent_e
-      )
-      or <- '{scripta~}'
-    )
-    'ain' 'ein' (
-      (
-        ('n' ]) or test oralize
-        <- '{eps}{n}'
-        delete_silent_e
-      )
-      or <- '{eps~}'
-    )
-    'ent' 'ant' (
-      (
-        test (oralize or 'ch' or 'r')
-        <- '{scripta~}{t}'
-        delete_silent_e
-      ) 
-      or <- '{scripta~}'
-    )
-    'en' '{e"}n' (
-      (
-        test oralize
-        <- '{scripta~}{n}'
-      )
-      or <- '{scripta~}'
-    )
-    'enne' '{e"}nne' 'enn{'}' (
-      <- '{eps}{n}'
-    )
-    'em' '{e"}m' (
-      (
-        ('m' ]) or test oralize
-        <- '{eps}{m}'
-      )
-      or <- '{scripta~}'
-    )
-    'in' (
-      (
-        ('n' ]) or test oralize
-        <- '{I}{n}'
-        delete_silent_e
-      )
-      or <- '{e~}'
-    )
-    '{i^}n' (<- '{e~}')
-    'on' (
-      (
-        ('n' ]) or test oralize
-        <- '{openo}{n}'
-        delete_silent_e
-      ) or (
-        <- '{o~}' 
-        try ([ 'h' ] <- '{n}')
-      )
-    )
-    '{o^}n' (<- '{o~}')
-    'om' (
-      (
-        ('m' ]) or test oralize
-        <- '{openo}{m}'
-      )
-      or <- '{o~}'
-    )
-    'un' (
-      (
-        ('n' ]) or test oralize
-        <- '{y}{n}'
-      )
-      or <- '{o`~}'
-    )
-    'um' (
-      (
-        ('m' ]) or test oralize
-        <- '{y}{m}'
-      )
-      or <- '{o`~}'
-    )
-
-    // Diphthongs
-    'ai' 'a{i^}' (<- '{e}{i}')
-    'au' 'a{u^}' (<- '{o}{u}')
-    'eau' (<- '{o}{u}')
-    'ui' (<- '{u}{i}')
-    'ueu' (<- '{w}{oe}')
-    'u{i^}' (<- '{u}{i}{long}')
-    'u{i^}n' (<- '{u}{e~}')
-    'yi' (<- '{j}{i}')
-
-    // Other combinations
-    'ayi' (<- '{e}{long}{j}{i}')
-    'e{i^}' (<- '{eps}{long}')
-    'eu' (<- '{oe}')
-    'e{u^}' (<- '{oe}{long}')
-    'o{u^}' (<- '{u}{long}')
-    'oeu' (<- '{oe}')
-    'ou' (
-      (
-        reverse (
-          'ou' 
-          (atlimit or ipa_consonants or (try '{long}' ipa_nasal_vowels))
-        ) 
-        test vowels 
-        <- '{w}'
-      )
-      or <- '{u}'
-    )
-    '{o"}u' ((test vowels <- '{w}') or <- '{u}')
-
-    // Soft L
-    'aill' (<- '{scripta}{long}{j}' try (['{'}l'] <- '{j}'))
-    'aill{'}' (<- '{scripta}{l}')
-    'eill' (<- '{e}{j}')
-    'eill{'}l' (<- '{e}{long}{j}{j}')
-    'ill' ((reverse ('ill' try '{long}' ipa_vowels)  <- '{j}') or <- '{i}{j}')
-    'ill{'}l' ((reverse ('ill{'}' try '{long}' ipa_vowels)  <- '{j}{j}') or <- '{i}{j}{j}')
-  )
-)
-
-define word_final as (
-    [substring try 's']
-    atlimit
-    among (
-      'ai' 'er'
-        (<- '{e}')
-      'aim'
-        (<- '{eps~}')
-      'aye'
-        (<- '{e}{i}')
-      'et' 'ets' '{e"}t' '{e"}ts'
-        (<- '{eps}')
-      'a{i^}' 'a{i^}s'
-        (<- '{eps}{long}')
-      'au' 'aus'
-        (<- '{o}{u}')
-      'aue'
-      'aux'
-      'eaux'
-        (<- '{o}{u}{long}')
-      'ieau'
-        (<- '{j}{o}{u}')
-      'ieaux'
-        (<- '{j}{o}{u}{long}')
-      'eux'
-        (<- '{oe}{long}')
-      'euse'
-        (<- '{oe}{long}{z}')
-      '{e'}e'
-        (<- '{e}') // TODO: long
-      'ait'
-      'aient'
-      'aie'
-        (<- '{e}{i}')
-      'eyen'
-      'a{i"}en'
-        (<- '{e}{j}{eps~}')
-      '{e'}s'
-      'ez'
-      'est'
-        (<- '{e}')
-      '{e'}er'
-        (<- '{e}{j}{e}')
-      'enne'
-        (<- '{eps}{n}')
-      'ien'
-      '{i"}en'
-        (
-          (
-            reverse (('ien' or '{i"}en') ipa_consonants)
-            <- '{y}{eps~}'
-          )
-          or <- '{i}{eps~}'
-        )
-      'ienne'
-      '{i"}enne'
-        (
-          (
-            reverse (('ienne' or '{i"}enne') ipa_consonants)
-            <- '{y}{eps}{n}'
-          )
-          or <- '{i}{eps}{n}'
-        )
-      'inne'
-        (<- '{I}{n}')
-      'it'
-      'id'
-        (<- '{i}')
-      'ue'
-        (<- '{y}{long}')
-      'ie'
-      'is'
-      'iz'
-      'ix'
-      'its'
-      'ids'
-        (<- '{i}{long}')
-      'o'
-        (<- '{o}')
-      'oue'
-        (<- '{u}{long}')
-      'eue'
-        (<- '{oe}{long}')
-      'ye'
-        (<- '{i}')
-      'e'
-      (delete)
-      'gue'
-        (<- '{g}')
-      'enner'
-      'ennez'
-        (<- '{eps}{n}{e}')
-      'ment'
-      'ement'
-        (<- '{m}{scripta~}')
-      'mente'
-      'emente'
-        (<- '{m}{scripta~}t')
-      'ville'
-        (<- '{v}{i}{l}')
-      'q' 'cq'
-        (<- '{k}')
-      'b' 'c' 'd' 'g' 'h' 'j' 'm' 'n' 'p' 's' 't' 'v' 'w' 'x' 'y' 'z'
-        (delete)
-    )
-)
+get 'src/stringdefs.sbl'
+get 'src/liaison.sbl'
+get 'src/silent_nt.sbl'
+get 'src/silent_h.sbl'
+get 'src/phonemes.sbl'
+get 'src/special-case.sbl'
 
 define phoneme as ( 
-    word_final
-    or mid_word_exceptions
-    or vowel_phoneme
-    or consonant_phoneme
-  )
+  word_final
+  or mid_word_exceptions
+  or vowel_phoneme
+  or consonant_phoneme
+)
 
 define phonemize_word as (
+  single_letter
+  or (
     repeat (exceptions or pre_word)
     silent_nt
     try word_initial
     repeat phoneme
-)
-
-strings ( suffix )
-
-define exceptions_with_hyphens as (
-  do repeat (goto ([ '-s-' or '-s{'}' ]) <- 'z')
-  (
-    backwards (
-      [substring]
-      among (
-        // TODO: liaison with -alle and -i'
-        '-t-i{'}'
-        '-t-alle'
-        '-ous'
-        '-ieune'
-        '-ieuni{e`}me'
-      )
-      -> suffix
-    )
-    setlimit goto suffix for phonemize_word_with_hyphens
-    backwards (
-      [substring]
-      among (
-        '-t-i{'}' (<- '{t}{i}')
-        '-t-alle' (<- '{t}{a}{l}')
-        '-ous' (<- '{u}')
-        '-ieune' (<- '{j}{oe}{n}')
-        '-ieuni{e`}me' (<- '{j}{oe}{n}{j}{eps}{m}')
-      )
-    )
-    tolimit
   )
 )
 
 define phonemize_word_with_hyphens as (
-  exceptions_with_hyphens or
-  repeat (
-     setlimit ((goto '-') or tolimit) for phonemize_word
-     goto ['-'] <- ' '
+  exceptions_with_hyphens
+  or repeat (
+    setlimit ((goto '-') or tolimit) for phonemize_word
+    goto ['-'] <- ' '
   )
 )
 
@@ -508,21 +44,31 @@ define word_end as (
   (goto ' ') or tolimit
 )
 
-define test_next_word_begins_vowel as (
-  unset next_word_begins_vowel
+define test_liaison as (
+  unset may_liaise
   do (
     ' '
-    vowels or (setlimit word_end for silent_h)
-    set next_word_begins_vowel
+    vowels or setlimit word_end for silent_h
+    set may_liaise
   )
 )
 
+define separator as ( [ tolimit ] -> sep )
+
 define phonemize as (
-  do (
-    repeat (goto (not accepted_characters) [ next ] <- ' ')
-  )
+  // Default separator
+  do $sep ($(len == 0) = '|')  
+
+  // Remove unknown characters
+  do repeat (goto (not accepted_characters) [ next ] <- ' ')
+
+  // Remove multiple spaces
+  do repeat (gopast ' ' [ goto not (' ' or '-') ] delete)
+
+  // Loop through words
   repeat (
-    setlimit (word_end test_next_word_begins_vowel) for phonemize_word_with_hyphens
+    try liaison_set_phrases
+    setlimit (word_end test_liaison) for phonemize_word_with_hyphens
     gopast ' '
   )
 )

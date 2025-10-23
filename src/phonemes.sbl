@@ -1,0 +1,340 @@
+routines (
+  consonant_phoneme
+  vowel_phoneme
+  word_final
+  oralize
+  not_double_consonant
+  delete_silent_e
+)
+
+define oralize as ( test (vowels or '{'}') )
+
+define not_double_consonant as (
+  test (consonants (vowels or 'li' or 'ly')) 
+  not test 'x'
+)
+
+define delete_silent_e as (
+    try (
+      ['e']
+      test ('o' or '{o^}' or 'a' or '{a^}' or not_double_consonant or 'fr') // TODO: exception for liquefrion instead?
+      delete 
+    )
+)
+
+define consonant_phoneme as (
+    [substring] among (
+      'b' 'bb' (<- '{b}')
+      '{cc}' (<- '{s}')
+      'c' ((test soft_vowels <- '{s}' delete_silent_e) or <- '{k}')
+      'cc' ((test soft_vowels <- '{k}{s}' delete_silent_e) or <- '{k}')
+      'c{'}c' (<- '{s}{s}')
+      'ce{'}' (<- '{s}')
+      'ch' (<- '{esh}')
+      'chr' (<- '{k}{r}')
+      'd' 'dd' (<- '{d}')
+      'dg' (<- '{dg}')
+      'f' 'ff' 'ph' (<- '{f}')
+      'g' ((test (soft_vowels or '{'}') <- '{ezh}' delete_silent_e) or <- '{g}')
+      'gu' ((test (soft_vowels or '{'}') <- '{g}') or <- '{g}{y}')
+      'gue' (<- '{g}')
+      'h' ()
+      'j' (<- '{ezh}')
+      'k' ()
+      'l' 'll' 'l{'}ye' (<- '{l}')
+      'l{'}l' (<- '{l}{l}')
+      'lyi' (<- '{j}{i}')
+      'm' 'mm' (<- '{m}')
+      'n' 'nn' (<- '{n}')
+      'gn' (<- '{gn}')
+      'p' 'pp' (<- '{p}')
+      'qu' 'cqu' (<- '{k}' delete_silent_e)
+      'r' 'rr' (<- '{r}')
+      's' ((test vowels reverse ('s' try '{long}' ipa_oral_vowels) <- '{z}') or <- '{s}')
+      'ss' (<- '{s}')
+      'sc' ((test soft_vowels <- '{s}') or <- '{s}{k}')
+      't' 'tt' (<- '{t}')
+      'tch' (<- '{tch}')
+      'th' (<- '{eth}')
+      'v' ()
+      'w' ()
+      'x' (<- '{z}')
+      'z' (<- '{z}')
+      '{'}' (delete)
+    )
+)
+
+
+define vowel_phoneme as (
+  [substring] among (
+
+    // Plain vowels
+    'a' '{a`}' (<- '{a}')
+    'e' '{e'}' '{e`}' 'ei' (<- '{eps}')
+    '{e'}e' (<- '{e}')
+    'i' (
+      (
+        test vowels_without_y
+        reverse ('i' ipa_consonants)
+        <- '{j}'
+      )
+      or <- '{i}'
+    )
+    '{i"}' 'y' (
+      (
+        test vowels_without_y
+        <- '{j}'
+      )
+      or <- '{i}'
+    )
+    'o' (<- '{openo}')
+    'u' '{u`}' '{u"}' (<- '{y}')
+
+    // Long vowels
+    '{a^}' (<- '{scripta}{long}')
+    '{e^}' (<- '{e}{i}')
+    '{i^}' '{y^}' (<- '{i}{long}')
+    '{o^}' (<- '{o}{u}')
+    '{u^}' (<- '{y}{long}')
+
+    // Nasal (& exceptions)
+    'an' (
+      (
+        ('n' ]) or test oralize
+        <- '{a}{n}'
+        delete_silent_e
+      )
+      or <- '{scripta~}'
+    )
+    'ain' 'ein' (
+      (
+        ('n' ]) or test oralize
+        <- '{eps}{n}'
+        delete_silent_e
+      )
+      or <- '{eps~}'
+    )
+    'ent' 'ant' (
+      (
+        test (oralize or 'ch' or 'r')
+        <- '{scripta~}{t}'
+        delete_silent_e
+      ) 
+      or <- '{scripta~}'
+    )
+    'en' '{e"}n' (
+      (
+        test oralize
+        <- '{scripta~}{n}'
+      )
+      or <- '{scripta~}'
+    )
+    'enne' '{e"}nne' 'enn{'}' (
+      <- '{eps}{n}'
+    )
+    'em' '{e"}m' (
+      (
+        ('m' ]) or test oralize
+        <- '{eps}{m}'
+      )
+      or <- '{scripta~}'
+    )
+    'in' (
+      (
+        ('n' ]) or test oralize
+        <- '{I}{n}'
+        delete_silent_e
+      )
+      or <- '{e~}'
+    )
+    '{i^}n' (<- '{e~}')
+    'on' (
+      (
+        ('n' ]) or test oralize
+        <- '{openo}{n}'
+        delete_silent_e
+      ) or (
+        <- '{o~}' 
+        try ([ 'h' ] <- '{n}')
+      )
+    )
+    '{o^}n' (<- '{o~}')
+    'om' (
+      (
+        ('m' ]) or test oralize
+        <- '{openo}{m}'
+      )
+      or <- '{o~}'
+    )
+    'un' (
+      (
+        ('n' ]) or test oralize
+        <- '{y}{n}'
+      )
+      or <- '{o`~}'
+    )
+    'um' (
+      (
+        ('m' ]) or test oralize
+        <- '{y}{m}'
+      )
+      or <- '{o`~}'
+    )
+
+    // Diphthongs
+    'a{i^}' (<- '{e}{i}')
+    'ai' (
+      (
+        test ('th' or 'm' or 'ch')   
+        <- '{eps}'
+      )
+      or <- '{e}{i}'
+    )
+    'au' 'a{u^}' (<- '{o}{u}')
+    'eau' (<- '{o}{u}')
+    'ui' (<- '{u}{i}')
+    'ueu' (<- '{w}{oe}')
+    'u{i^}' (<- '{u}{i}{long}')
+    'u{i^}n' (<- '{u}{e~}')
+    'yi' (<- '{j}{i}')
+
+    // Other combinations
+    'ayi' (<- '{e}{long}{j}{i}')
+    'e{i^}' (<- '{eps}{long}')
+    'eu' (<- '{oe}')
+    'e{u^}' (<- '{oe}{long}')
+    'o{u^}' (<- '{u}{long}')
+    'oeu' (<- '{oe}')
+    'ou' (
+      (
+        reverse (
+          'ou' 
+          (atlimit or ipa_consonants or (try '{long}' ipa_nasal_vowels))
+        ) 
+        test vowels 
+        <- '{w}'
+      )
+      or <- '{u}'
+    )
+    '{o"}u' ((test vowels <- '{w}') or <- '{u}')
+
+    // Soft L
+    'aill' (<- '{scripta}{long}{j}' try (['{'}l'] <- '{j}'))
+    'aill{'}' (<- '{scripta}{l}')
+    'eill' (<- '{e}{j}')
+    'eill{'}l' (<- '{e}{long}{j}{j}')
+    'ill' ((reverse ('ill' try '{long}' ipa_vowels)  <- '{j}') or <- '{i}{j}')
+    'ill{'}l' ((reverse ('ill{'}' try '{long}' ipa_vowels)  <- '{j}{j}') or <- '{i}{j}{j}')
+  )
+)
+
+define word_final as (
+    [substring try 's']
+    atlimit
+    among (
+      'ai' 'er'
+        (<- '{e}')
+      'aim'
+        (<- '{eps~}')
+      'aye'
+        (<- '{e}{i}')
+      'et' 'ets' '{e"}t' '{e"}ts'
+        (<- '{eps}')
+      'a{i^}' 'a{i^}s'
+        (<- '{eps}{long}')
+      'au' 'aus'
+        (<- '{o}{u}')
+      'aue'
+      'aux'
+      'eaux'
+        (<- '{o}{u}{long}')
+      'ieau'
+        (<- '{j}{o}{u}')
+      'ieaux'
+        (<- '{j}{o}{u}{long}')
+      'eux'
+        (<- '{oe}{long}')
+      'euse'
+        (<- '{oe}{long}{z}')
+      '{e'}e'
+        (<- '{e}')
+      'ait'
+      'aient'
+        (<- '{e}{i}' try (must_liaise insert '{t}'))
+      'aie'
+        (<- '{e}{i}')
+      'a{i"}en'
+      'eyen'
+        (<- '{e}{j}{eps~}')
+      '{e'}s'
+      'ez'
+        (<- '{e}')
+      'est'
+        (<- '{e}' try (must_liaise insert '{t}'))
+      'ent'
+        (must_liaise <- '{t}')
+      '{e'}er'
+        (<- '{e}{j}{e}')
+      'enne'
+        (<- '{eps}{n}')
+      'ien'
+      '{i"}en'
+        (
+          (
+            reverse (('ien' or '{i"}en') ipa_consonants)
+            <- '{y}{eps~}'
+          )
+          or <- '{i}{eps~}'
+        )
+      'ienne'
+      '{i"}enne'
+        (
+          (
+            reverse (('ienne' or '{i"}enne') ipa_consonants)
+            <- '{y}{eps}{n}'
+          )
+          or <- '{i}{eps}{n}'
+        )
+      'inne'
+        (<- '{I}{n}')
+      'it'
+      'id'
+        (<- '{i}')
+      'ue'
+        (<- '{y}{long}')
+      'ie'
+      'is'
+      'iz'
+      'ix'
+      'its'
+      'ids'
+        (<- '{i}{long}')
+      'o'
+        (<- '{o}')
+      'oue'
+        (<- '{u}{long}')
+      'eue'
+        (<- '{oe}{long}')
+      'ye'
+        (<- '{i}')
+      'e'
+      (delete)
+      'gue'
+        (<- '{g}')
+      'enner'
+      'ennez'
+        (<- '{eps}{n}{e}')
+      'ment'
+      'ement'
+        (<- '{m}{scripta~}')
+      'mente'
+      'emente'
+        (<- '{m}{scripta~}t')
+      'ville'
+        (<- '{v}{i}{l}')
+      'q' 'cq'
+        (<- '{k}')
+      'b' 'c' 'd' 'g' 'h' 'j' 'm' 'n' 'p' 's' 't' 'v' 'w' 'x' 'y' 'z'
+        (must_liaise or delete)
+    )
+)

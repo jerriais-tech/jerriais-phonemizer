@@ -65,11 +65,14 @@ stringdef s     's'
 stringdef t     't'
 stringdef v     'v'
 stringdef z     'z'
-stringdef esh   '{U+0283}'  // ʃ
-stringdef ezh   '{U+0292}'  // ʒ
-stringdef ich   '{U+00E7}'  // ç
-stringdef eth   '{U+00F0}'  // ð
-stringdef gn    '{U+0272}'  // ɲ
+stringdef esh   '{U+0283}'        // ʃ
+stringdef ezh   '{U+0292}'        // ʒ
+stringdef ich   '{U+00E7}'        // ç
+stringdef eth   '{U+00F0}'        // ð
+stringdef gn    '{U+0272}'        // ɲ
+stringdef tie   '{U+0361}'        //  ͡
+stringdef tch   '{t}{tie}{esh}'   // t͡ʃ
+stringdef dg    '{d}{tie}{ezh}'   // d͡ʒ
 
 stringdef a         'a'
 stringdef e         'e'
@@ -107,3 +110,7 @@ define ipa_consonants '{b}{d}{f}{g}{h}{k}{l}{m}{n}{p}{r}{s}{t}{v}{z}{esh}{ezh}{i
 define ipa_oral_vowels '{a}{e}{i}{I}{j}{o}{u}{y}{w}{scripta}{eps}{openo}{oe}{o`}'
 define ipa_nasal_vowels '{a~}{e~}{o~}{scripta~}{openo~}{eps~}{o`~}'
 define ipa_vowels ipa_oral_vowels + ipa_nasal_vowels + '{long}'
+
+// Separator
+
+strings ( sep )

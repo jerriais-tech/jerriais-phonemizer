@@ -1,39 +1,57 @@
-routines ( liaison )
+routines ( 
+  liaison 
+  liaison_set_phrases 
+)
+
+booleans (
+  may_liaise
+  must_liaise
+)
 
 define liaison as (
   [substring]
   atlimit
   among (
     'un' (<- '{o`~}{n}')
-    '{e`}s' (<- '{eps}{s}')
-    'les' (<- '{l}{eps}{s}')
-    'des' (<- '{d}{eps}{s}')
+    '{e`}s' (<- '{eps}{z}')
+    'les' (<- '{l}{eps}{z}')
+    'des' (<- '{d}{eps}{z}')
     'en' (<- '{scripta~}{n}')
 
-    'ous' (<- '{u}{s}')
-    'mes' (<- '{m}{eps}{s}')
-    'tes' (<- '{t}{eps}{s}')
-    'lus' (<- '{l}{y}{s}')
-    'nos' (<- '{n}{o}{s}')
-    'vos' (<- '{v}{o}{s}')
-    'nouos' (<- '{n}{w}{o}{s}')
-    'vouos' (<- '{v}{w}{o}{s}')
+    'ous' (<- '{u}{z}')
+    'mes' (<- '{m}{eps}{z}')
+    'tes' (<- '{t}{eps}{z}')
+    'ses' (<- '{s}{eps}{z}')
+    'lus' (<- '{l}{y}{z}')
+    'nos' (<- '{n}{o}{z}')
+    'vos' (<- '{v}{o}{z}')
+    'nouos' (<- '{n}{w}{o}{z}')
+    'vouos' (<- '{v}{w}{o}{z}')
 
     'ch{'}t' (<- '{esh}{t}')
-    'ches' (<- '{esh}{eps}{s}')
+    'ches' (<- '{esh}{eps}{z}')
 
-    'deux' (<- '{d}{oe}{s}')
-    'trais' (<- '{t}{r}{e}{s}')
-    'si{e^}x' (<- '{s}{j}{e}{i}{s}')
-    'dgi{e^}x' (<- '{d}{ezh}{j}{e}{i}{s}')
+    'deux' (<- '{d}{oe}{z}')
+    'trais' (<- '{t}{r}{e}{z}')
+    'si{e^}x' (<- '{s}{j}{e}{i}{z}')
+    'dgi{e^}x' (<- '{d}{ezh}{j}{e}{i}{z}')
     'v{i^}ngt' (<- '{v}{e~}{t}')
     'sept' (<- '{s}{eps}{t}')
     'huit' (<- '{w}{i}{t}')
 
-    // TODO: pus / mains
-    // tout à fait
-    // bein
-    // ch'est en tchi
-    // m'est avis
+  )
+)
+
+define liaison_set_phrases as (
+  [substring]
+  among (
+    'pus {a`} co' (<- '{p}{y}{z} {a} {k}{o}')
+    'pus en pus' (<- '{p}{y}{z} {scripta~} {p}{y}')
+    'd{'}pus en pus' (<- '{d}{p}{y}{z} {scripta~} {p}{y}')
+    'd{'}mains en mains' (<- '{d}{m}{eps~}{z} {scripta~} {m}{eps~}')
+    'tout {a`} fait' (<- '{t}{u}{t} {a} {f}{e}{i}')
+    'ch{'}est en tchi' (<- '{esh}{e}{t} {scripta~} {tch}{i}')
+    'm{'}est avis' (<- '{m}{e}{t} {a}{v}{i}')
+    // TODO: bein - yes or no?
   )
 )
