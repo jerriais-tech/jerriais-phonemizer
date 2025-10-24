@@ -311,7 +311,14 @@ class BaseStemmer:
     def stemWords(self, words):
         return [self.stemWord(word) for word in words]
 
-    def phonemize(self, word):
+    def phonemize(self, word, separator=None tie=None):
+        if separator:
+            self.set_current(separator)
+            self._set_separator()
+        if tie:
+            self.set_current(tie)
+            self._set_tie()
+
         self.set_current(word)
         self._phonemize()
         return self.get_current()

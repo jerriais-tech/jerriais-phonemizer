@@ -118,7 +118,7 @@ define exceptions as (
       'mille' (<- '{m}{i}{l}')
       'biblioth{e`}que' (<- '{b}{i}{b}{j}{o}{t}{eps}{k}')
       'hypoth{e`}que' (<- '{i}{p}{openo}{t}{eps}{k}')
-      'a{i^}siement' (<- '{e}{i}{z}{i}{m}{scripta~}')
+      'a{i^}siement' (<- '{ei}{z}{i}{m}{scripta~}')
       'sept' (<- '{s}{eps}{t}')
       'corps' (<- '{k}{openo}{r}')
       'j{e'}tho' (<- '{j}{eps}{t}{openo}')
@@ -155,7 +155,7 @@ define mid_word_exceptions as (
   silent_l
   or (
     [substring] among (
-      'temps' (<- '{t}{a~}')
+      'temps' (<- '{t}{scripta~}')
       'femm' (<- '{f}{scripta~}{m}')
       'llem' (<- '{l}{m}')
       '{e`}rr' (<- '{eps}{long}{r}')

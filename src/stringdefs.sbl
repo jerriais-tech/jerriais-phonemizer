@@ -53,7 +53,7 @@ define accepted_characters consonants + vowels + accepted_punctuation
 stringdef b     'b'
 stringdef d     'd'
 stringdef f     'f'
-stringdef g     'g'
+stringdef g     '{U+0261}'        // ɡ
 stringdef h     'h'
 stringdef k     'k'
 stringdef l     'l'
@@ -67,17 +67,14 @@ stringdef v     'v'
 stringdef z     'z'
 stringdef esh   '{U+0283}'        // ʃ
 stringdef ezh   '{U+0292}'        // ʒ
-stringdef ich   '{U+00E7}'        // ç
 stringdef eth   '{U+00F0}'        // ð
 stringdef gn    '{U+0272}'        // ɲ
 stringdef tie   '{U+0361}'        //  ͡
-stringdef tch   '{t}{tie}{esh}'   // t͡ʃ
-stringdef dg    '{d}{tie}{ezh}'   // d͡ʒ
 
 stringdef a         'a'
 stringdef e         'e'
 stringdef i         'i'
-stringdef I         'I'
+stringdef I         '{U+026A}'          // ɪ
 stringdef o         'o'
 stringdef u         'u'
 stringdef y         'y'
@@ -85,19 +82,21 @@ stringdef scripta   '{U+0251}'          // ɑ
 stringdef eps       '{U+025B}'          // ɛ
 stringdef openo     '{U+0254}'          // ɔ
 stringdef oe        '{U+0153}'          // œ
-stringdef o`        '{U+00F8}'          // ø
-stringdef a~        '{U+00E3}'          // ã
-stringdef e~        '{U+1EBD}'          // ẽ
-stringdef o~        '{U+00F5}'          // õ
 stringdef tilde     '{U+0303}'          // combining ~
+stringdef e~        '{e}{tilde}'        // ẽ
+stringdef o~        '{o}{tilde}'          // õ
 stringdef scripta~  '{scripta}{tilde}'  // ɑ̃
 stringdef openo~    '{openo}{tilde}'    // ɔ̃
 stringdef eps~      '{eps}{tilde}'      // ɛ̃
-stringdef o`~       '{o`}{tilde}'       // ø̃
+stringdef o`~       '{U+00F8}{tilde}'   // ø̃
 stringdef long      '{U+02D0}'          // ː
-// Technically consonants, but for our purposes these are vowels
 stringdef w         'w'
 stringdef j         'j'
+
+stringdef tch   '{t}{tie}{esh}'   // t͡ʃ
+stringdef dg    '{d}{tie}{ezh}'   // d͡ʒ
+stringdef ei    '{e}{tie}{i}'     // e͡i
+stringdef ou    '{o}{tie}{u}'     // o͡u
 
 groupings (
   ipa_consonants
@@ -106,11 +105,8 @@ groupings (
   ipa_nasal_vowels
 )
 
-define ipa_consonants '{b}{d}{f}{g}{h}{k}{l}{m}{n}{p}{r}{s}{t}{v}{z}{esh}{ezh}{ich}{eth}{gn}'
-define ipa_oral_vowels '{a}{e}{i}{I}{j}{o}{u}{y}{w}{scripta}{eps}{openo}{oe}{o`}'
-define ipa_nasal_vowels '{a~}{e~}{o~}{scripta~}{openo~}{eps~}{o`~}'
+// Technically /w/ and /j/ are consonants, but for our purposes these are vowels
+define ipa_consonants '{b}{d}{f}{g}{h}{k}{l}{m}{n}{p}{r}{s}{t}{v}{z}{esh}{ezh}{eth}{gn}'
+define ipa_oral_vowels '{a}{e}{i}{I}{j}{o}{u}{y}{w}{scripta}{eps}{openo}{oe}'
+define ipa_nasal_vowels '{e~}{o~}{scripta~}{openo~}{eps~}{o`~}'
 define ipa_vowels ipa_oral_vowels + ipa_nasal_vowels + '{long}'
-
-// Separator
-
-strings ( sep )

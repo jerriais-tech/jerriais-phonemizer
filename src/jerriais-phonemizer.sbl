@@ -1,4 +1,4 @@
-externals ( phonemize separator )
+externals ( phonemize set_separator set_tie )
 
 routines (
   phonemize_word
@@ -53,22 +53,48 @@ define test_liaison as (
   )
 )
 
-define separator as ( [ tolimit ] -> sep )
+strings (
+  separator
+  user_tie
+)
+
+define set_separator as (
+  [ tolimit ] -> separator
+)
+
+define set_tie as (
+  [ tolimit ] -> user_tie
+)
 
 define phonemize as (
-  // Default separator
-  do $sep ($(len == 0) = '|')  
-
   // Remove unknown characters
   do repeat (goto (not accepted_characters) [ next ] <- ' ')
 
-  // Remove multiple spaces
-  do repeat (gopast ' ' [ goto not (' ' or '-') ] delete)
+  // Remove multiple spaces and trim
+  do (
+    do ([' '] delete)
+    do repeat (gopast ' ' [ goto (not (' ' or '-')) ] delete)
+    do (
+      tomark (size - 1)
+      [' '] delete
+    )
+  )
 
   // Loop through words
-  repeat (
+  do repeat (
     try liaison_set_phrases
     setlimit (word_end test_liaison) for phonemize_word_with_hyphens
     gopast ' '
+  )
+
+  // Optionally separate phonemes with user provided delimiter
+  // and / or use a user provided tie bar
+  ($separator $(len > 0)) or ($user_tie $(len > 0))
+  repeat (
+    next
+    ' '
+    or (['{tie}'] <- user_tie)
+    or test ('{long}' or '{tilde}')
+    or insert separator
   )
 )

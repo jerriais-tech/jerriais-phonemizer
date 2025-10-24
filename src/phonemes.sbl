@@ -70,7 +70,7 @@ define vowel_phoneme as (
 
     // Plain vowels
     'a' '{a`}' (<- '{a}')
-    'e' '{e'}' '{e`}' 'ei' (<- '{eps}')
+    'e' '{e'}' '{e`}' 'ei' '{e"}'(<- '{eps}')
     '{e'}e' (<- '{e}')
     'i' (
       (
@@ -92,9 +92,9 @@ define vowel_phoneme as (
 
     // Long vowels
     '{a^}' (<- '{scripta}{long}')
-    '{e^}' (<- '{e}{i}')
+    '{e^}' (<- '{ei}')
     '{i^}' '{y^}' (<- '{i}{long}')
-    '{o^}' (<- '{o}{u}')
+    '{o^}' (<- '{ou}')
     '{u^}' (<- '{y}{long}')
 
     // Nasal (& exceptions)
@@ -182,16 +182,16 @@ define vowel_phoneme as (
     )
 
     // Diphthongs
-    'a{i^}' (<- '{e}{i}')
+    'a{i^}' (<- '{ei}')
     'ai' (
       (
         test ('th' or 'm' or 'ch')   
         <- '{eps}'
       )
-      or <- '{e}{i}'
+      or <- '{ei}'
     )
-    'au' 'a{u^}' (<- '{o}{u}')
-    'eau' (<- '{o}{u}')
+    'au' 'a{u^}' (<- '{ou}')
+    'eau' (<- '{ou}')
     'ui' (<- '{u}{i}')
     'ueu' (<- '{w}{oe}')
     'u{i^}' (<- '{u}{i}{long}')
@@ -237,21 +237,21 @@ define word_final as (
       'aim'
         (<- '{eps~}')
       'aye'
-        (<- '{e}{i}')
+        (<- '{ei}')
       'et' 'ets' '{e"}t' '{e"}ts'
         (<- '{eps}')
       'a{i^}' 'a{i^}s'
         (<- '{eps}{long}')
       'au' 'aus'
-        (<- '{o}{u}')
+        (<- '{ou}')
       'aue'
       'aux'
       'eaux'
-        (<- '{o}{u}{long}')
+        (<- '{ou}{long}')
       'ieau'
-        (<- '{j}{o}{u}')
+        (<- '{j}{ou}')
       'ieaux'
-        (<- '{j}{o}{u}{long}')
+        (<- '{j}{ou}{long}')
       'eux'
         (<- '{oe}{long}')
       'euse'
@@ -260,9 +260,9 @@ define word_final as (
         (<- '{e}')
       'ait'
       'aient'
-        (<- '{e}{i}' try (must_liaise insert '{t}'))
+        (<- '{ei}' try (must_liaise insert '{t}'))
       'aie'
-        (<- '{e}{i}')
+        (<- '{ei}')
       'a{i"}en'
       'eyen'
         (<- '{e}{j}{eps~}')
