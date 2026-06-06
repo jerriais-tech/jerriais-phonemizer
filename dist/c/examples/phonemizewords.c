@@ -80,6 +80,8 @@ phonemize_file(struct SN_env * env, FILE * f_in, FILE * f_out)
                     fputs(" -> ", f_out);
                 } else if (pretty == 2) {
                     fwrite(b, i, 1, f_out);
+                    fputs("\t", f_out);
+                    /*
                     if (phonemizer_length(env) > 0) {
                         int j;
                         if (inlen < 30) {
@@ -91,6 +93,7 @@ phonemize_file(struct SN_env * env, FILE * f_in, FILE * f_out)
                                 fputs(" ", f_out);
                         }
                     }
+                    */
                 }
 
                 fputs((const char *)phonemized, f_out);

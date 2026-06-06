@@ -23,7 +23,7 @@ test: python tests/test_cases.csv snapshot
 snapshot: tests/snapshot.dic tests/phrases.dic
 
 tests/snapshot.dic tests/phrases.dic: dist/c/phonemizewords tests/jerriais.dic tests/phrases.txt
-	./dist/c/phonemizewords -i tests/jerriais.dic -o tests/snapshot.dic -p
+	./dist/c/phonemizewords -i tests/jerriais.dic -o tests/snapshot.dic -p2
 	./dist/c/phonemizewords -i tests/phrases.txt -o tests/phrases.dic -p
 
 docs/js/phonemizer.js: javascript
