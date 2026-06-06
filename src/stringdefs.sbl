@@ -69,7 +69,9 @@ stringdef esh   '{U+0283}'        // ʃ
 stringdef ezh   '{U+0292}'        // ʒ
 stringdef eth   '{U+00F0}'        // ð
 stringdef gn    '{U+0272}'        // ɲ
-stringdef tie   '{U+0361}'        //  ͡
+
+stringdef dg    '{U+02A4}'        // ʤ
+stringdef tch   '{U+02A7}'        // ʧ
 
 stringdef a         'a'
 stringdef e         'e'
@@ -93,10 +95,11 @@ stringdef long      '{U+02D0}'          // ː
 stringdef w         'w'
 stringdef j         'j'
 
-stringdef tch   '{t}{tie}{esh}'   // t͡ʃ
-stringdef dg    '{d}{tie}{ezh}'   // d͡ʒ
-stringdef ei    '{e}{tie}{i}'     // e͡i
-stringdef ou    '{o}{tie}{u}'     // o͡u
+
+stringdef ei        '{e}{i}'           // ei
+stringdef ou        '{o}{u}'           // ou
+stringdef ei_long   '{e}{long}{i}'     // eːi
+stringdef ou_long   '{o}{long}{u}'     // oːu
 
 groupings (
   ipa_consonants

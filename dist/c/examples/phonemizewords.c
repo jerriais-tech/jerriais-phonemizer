@@ -192,8 +192,8 @@ main(int argc, char * argv[])
         exit(1);
     }
 
-    SN_set_current(phonemizer_env, 1, "_");
-    set_separator(phonemizer_env);
+    // SN_set_current(phonemizer_env, 1, "_");
+    // set_separator(phonemizer_env);
 
     phonemize_file(phonemizer_env, f_in, f_out);
     close_env(phonemizer_env);

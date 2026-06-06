@@ -1,4 +1,5 @@
-externals ( phonemize set_separator set_tie )
+externals ( phonemize set_separator )
+
 
 routines (
   phonemize_word
@@ -55,15 +56,10 @@ define test_liaison as (
 
 strings (
   separator
-  user_tie
 )
 
 define set_separator as (
   [ tolimit ] -> separator
-)
-
-define set_tie as (
-  [ tolimit ] -> user_tie
 )
 
 define phonemize as (
@@ -88,12 +84,11 @@ define phonemize as (
   )
 
   // Optionally separate phonemes with user provided delimiter
-  // and / or use a user provided tie bar
-  ($separator $(len > 0)) or ($user_tie $(len > 0))
+  ($separator $(len > 0))
   repeat (
     next
+    not atlimit
     ' '
-    or (['{tie}'] <- user_tie)
     or test ('{long}' or '{tilde}')
     or insert separator
   )

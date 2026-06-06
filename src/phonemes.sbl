@@ -35,7 +35,8 @@ define consonant_phoneme as (
       'd' 'dd' (<- '{d}')
       'dg' (<- '{dg}')
       'f' 'ff' 'ph' (<- '{f}')
-      'g' ((test (soft_vowels or '{'}') <- '{ezh}' delete_silent_e) or <- '{g}')
+      'g' ((test (soft_vowels) <- '{ezh}' delete_silent_e) or <- '{g}')
+      'g{'}g' (<- '{ezh}{ezh}' delete_silent_e)
       'gu' ((test (soft_vowels or '{'}') <- '{g}') or <- '{g}{y}')
       'gue' (<- '{g}')
       'h' ()
@@ -67,7 +68,6 @@ define consonant_phoneme as (
 
 define vowel_phoneme as (
   [substring] among (
-
     // Plain vowels
     'a' '{a`}' (<- '{a}')
     'e' '{e'}' '{e`}' 'ei' '{e"}'(<- '{eps}')
@@ -92,9 +92,9 @@ define vowel_phoneme as (
 
     // Long vowels
     '{a^}' (<- '{scripta}{long}')
-    '{e^}' (<- '{ei}')
+    '{e^}' (<- '{ei_long}')
     '{i^}' '{y^}' (<- '{i}{long}')
-    '{o^}' (<- '{ou}')
+    '{o^}' (<- '{ou_long}')
     '{u^}' (<- '{y}{long}')
 
     // Nasal (& exceptions)
@@ -116,12 +116,13 @@ define vowel_phoneme as (
     )
     'ent' 'ant' (
       (
-        test (oralize or 'ch' or 'r')
+        test (oralize or 'r')
         <- '{scripta~}{t}'
         delete_silent_e
       ) 
       or <- '{scripta~}'
     )
+    'entch' 'antch' (<- '{scripta~}{tch}')
     'en' '{e"}n' (
       (
         test oralize
@@ -147,7 +148,7 @@ define vowel_phoneme as (
       )
       or <- '{e~}'
     )
-    '{i^}n' (<- '{e~}')
+    '{i^}n' (<- '{e~}{long}')
     'on' (
       (
         ('n' ]) or test oralize
@@ -158,7 +159,7 @@ define vowel_phoneme as (
         try ([ 'h' ] <- '{n}')
       )
     )
-    '{o^}n' (<- '{o~}')
+    '{o^}n' (<- '{o~}{long}')
     'om' (
       (
         ('m' ]) or test oralize
@@ -182,7 +183,7 @@ define vowel_phoneme as (
     )
 
     // Diphthongs
-    'a{i^}' (<- '{ei}')
+    'a{i^}' (<- '{ei_long}')
     'ai' (
       (
         test ('th' or 'm' or 'ch')   
@@ -190,12 +191,13 @@ define vowel_phoneme as (
       )
       or <- '{ei}'
     )
-    'au' 'a{u^}' (<- '{ou}')
+    'au' (<- '{ou}')
+    'a{u^}' (<- '{ou_long}')
     'eau' (<- '{ou}')
     'ui' (<- '{u}{i}')
     'ueu' (<- '{w}{oe}')
     'u{i^}' (<- '{u}{i}{long}')
-    'u{i^}n' (<- '{u}{e~}')
+    'u{i^}n' (<- '{u}{e~}{long}')
     'yi' (<- '{j}{i}')
 
     // Other combinations
@@ -205,13 +207,13 @@ define vowel_phoneme as (
     'e{u^}' (<- '{oe}{long}')
     'o{u^}' (<- '{u}{long}')
     'oeu' (<- '{oe}')
-    'ou' (
+    'ou' 'o{u`}' (
       (
         reverse (
-          'ou' 
+          ('ou' or 'o{u`}')
           (atlimit or ipa_consonants or (try '{long}' ipa_nasal_vowels))
         ) 
-        test vowels 
+        test (vowels or '{'}')
         <- '{w}'
       )
       or <- '{u}'
@@ -237,7 +239,7 @@ define word_final as (
       'aim'
         (<- '{eps~}')
       'aye'
-        (<- '{ei}')
+        (<- '{ei_long}')
       'et' 'ets' '{e"}t' '{e"}ts'
         (<- '{eps}')
       'a{i^}' 'a{i^}s'
@@ -247,17 +249,17 @@ define word_final as (
       'aue'
       'aux'
       'eaux'
-        (<- '{ou}{long}')
+        (<- '{ou_long}')
       'ieau'
         (<- '{j}{ou}')
       'ieaux'
-        (<- '{j}{ou}{long}')
+        (<- '{j}{ou_long}')
       'eux'
         (<- '{oe}{long}')
       'euse'
         (<- '{oe}{long}{z}')
       '{e'}e'
-        (<- '{e}')
+        (<- '{e}{long}')
       'ait'
       'aient'
         (<- '{ei}' try (must_liaise insert '{t}'))
@@ -268,7 +270,7 @@ define word_final as (
         (<- '{e}{j}{eps~}')
       '{e'}s'
       'ez'
-        (<- '{e}')
+        (<- '{e}' try (must_liaise insert '{z}'))
       'est'
         (<- '{e}' try (must_liaise insert '{t}'))
       'ent'
@@ -299,16 +301,17 @@ define word_final as (
         (<- '{I}{n}')
       'it'
       'id'
-        (<- '{i}')
+        (<- '{i}{long}')
       'ue'
         (<- '{y}{long}')
       'ie'
       'is'
-      'iz'
       'ix'
       'its'
       'ids'
         (<- '{i}{long}')
+      'iz'
+        (<- '{i}{long}' try (must_liaise insert '{z}'))
       'o'
         (<- '{o}')
       'oue'
@@ -330,11 +333,17 @@ define word_final as (
       'mente'
       'emente'
         (<- '{m}{scripta~}t')
-      'ville'
-        (<- '{v}{i}{l}')
-      'q' 'cq'
+      'ille'
+        (<- '{i}{l}')
+      'aille'
+        (<- '{scripta}{long}{l}')
+      'q' 'cq' 'c'
         (<- '{k}')
-      'b' 'c' 'd' 'g' 'h' 'j' 'm' 'n' 'p' 's' 't' 'v' 'w' 'x' 'y' 'z'
+      'g{'}'
+        (<- '{ezh}')
+      'anc'
+        (<- '{scripta~}')
+      'b' 'd' 'g' 'h' 'j' 'm' 'n' 'p' 's' 't' 'v' 'w' 'x' 'z'
         (must_liaise or delete)
     )
 )

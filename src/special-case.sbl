@@ -72,21 +72,31 @@ define exceptions as (
       'm{'}n' (<- '{m}{n}')
       'm{e'}n' (<- '{m}{eps}{n}')
       'm{'}s' (<- '{m}{z}')
+      'm{'}th' (<- '{m}{eth}')
       'mes' (<- '{m}{eps}')
       't{'}n' (<- '{t}{n}')
       't{e'}n' (<- '{t}{eps}{n}')
       'tes' (<- '{t}{eps}')
       's{'}n' (<- '{s}{n}')
       's{e'}n' (<- '{s}{eps}{n}')
-      'ses' (<- '{s}{eps}')
+      'n{'}n' (<- '{n}{n}')
+      'ses' (<- '{s}{e}')
+      'ches' (<- '{esh}{e}')
       'ch{'}t' (<- '{esh}{t}')
       'ch{'}t{'}' (<- '{esh}{t}')
+      'ces' (<- '{s}{e}')
       'il' (<- '{i}{l}')
+
+      'es' (<- '{e}')
+      '{e`}s' (<- '{eps}')
+
+      'neuf' (<- '{n}{oe}')
 
       'x' (<- '{eps}{k}{s}')
       'y' (<- '{i}')
 
       'hie' (<- '{i}{long}')
+      'icho' (<- '{i}{k}{o}')
 
       'eus' 'eut' (<- '{y}')
       'e{u^}nmes' (<- '{y}{long}{m}')
@@ -97,8 +107,10 @@ define exceptions as (
       'e{u^}ssyiz' (<- '{y}{long}{s}{j}{i}')
       'e{u^}ssiez' (<- '{y}{long}{s}{j}{e}')
 
-      '{e^}tions' (<- '{eps}{t}{j}{o~}')
+      '{e'}tions' (<- '{eps}{t}{j}{o~}')
       '{'}tions' (<- '{t}{j}{o~}')
+
+      'ours' (<- '{u}{r}{s}')
     )
   )
   or
@@ -111,20 +123,27 @@ define exceptions as (
       )
       'v{i^}ngt' (
         try ('s'])
-        (atlimit <- '{v}{e~}')
-        or <- '{v}{e~}t'
+        (atlimit <- '{v}{e~}{long}')
+        or <- '{v}{e~}{long}{t}'
       )
       'ville' (<- '{v}{i}{l}')
       'mille' (<- '{m}{i}{l}')
       'biblioth{e`}que' (<- '{b}{i}{b}{j}{o}{t}{eps}{k}')
       'hypoth{e`}que' (<- '{i}{p}{openo}{t}{eps}{k}')
-      'a{i^}siement' (<- '{ei}{z}{i}{m}{scripta~}')
+      'a{i^}siement' (<- '{ei_long}{z}{i}{m}{scripta~}')
       'sept' (<- '{s}{eps}{t}')
       'corps' (<- '{k}{openo}{r}')
       'j{e'}tho' (<- '{j}{eps}{t}{openo}')
       'biguesse' (<- '{b}{i}{g}{eps}{s}')
       'onguenn' (<- '{o~}{g}{scripta~}{n}')
       'onguent' (<- '{o~}{g}{scripta~}')
+      'g{'}lice' (<- '{g}{l}{i}{s}')
+      'g{'}linne' (<- '{g}{l}{i}{n}')
+      'g{'}luge' (<- '{g}{l}{y}{ezh}')
+      'g{'}n{e^}t' (<- '{ezh}{n}{e}{long}{i}')
+      'g{'}nou' (<- '{ezh}{n}{u}')
+      'g{'}nouo' (<- '{ezh}{n}{w}{openo}')
+      'g{'}niche' (<- '{ezh}{n}{i}{esh}')
     )
   )
 )
@@ -158,56 +177,88 @@ define mid_word_exceptions as (
       'temps' (<- '{t}{scripta~}')
       'femm' (<- '{f}{scripta~}{m}')
       'llem' (<- '{l}{m}')
-      '{e`}rr' (<- '{eps}{long}{r}')
       'tion' (<- '{s}{j}{o~}')
+      'ax' (<- '{a}{k}{s}')
+      'osc' (<- '{openo}{s}{k}')
+      'bike' (<- '{b}{scripta}{long}{k}')
+      'hook' (<- '{h}{u}{k}')
+      'b{a^}pt' (<- '{b}{scripta}{long}{t}')
+      'g{'}l' ((test ('i' vowels) 'i' ] <- '{ezh}{j}') or <- '{ezh}{l}')
+      // TODO: asphyxier, êtchinnoxe
     )
   )
 )
 
+// Hard g:
+// ag'ner, ag'ver, g'vil'y*, g'veu*, ag'nichi
+// g'lice, g'linne, g'nache, g'zette, ag'nage
+// g'luge, dêg'nilyi, g'nile, bog'se, g'nachon
+// g'né, g'vêtre, 
+
+// Soft g:
+// g'lé, dêg'lé, g'ler, g'lons, g'lez
+// g'nêt, g'nou, g'niche, dang'l*
+
+// TODO: imperative with object
 define exceptions_with_hyphens as (
   do repeat (goto ([ '-s' ('-' or '{'}') ]) <- 'ze-')
-  setlimit goto (
-    test [substring] atlimit
-    among (
-      '-t-i{'}' (<- '{t}{i}')
-      '-t-alle' (<- '{t}{a}{l}')
-      '-ieune' (<- '{j}{oe}{n}')
-      '-ieuni{e`}me' (<- '{j}{oe}{n}{j}{eps}{m}')
-
-      '-t-en' (
-        (must_liaise or may_liaise <- '{t}{scripta~}{n}')
-        or <- '{t}{scripta~}'
-      )
-
-      '-i{'}' (
-        set must_liaise
-        <- '{i}'
-      )
-      '-alle' (
-        set must_liaise
-        <- '{a}{l}'
-      )
-      '-y' (
-        set must_liaise
-        <- '{i}'
-      )
-      '-ous' (
-        (must_liaise or may_liaise <- '{u}{z}')
-        or <- '{u}'
-        set must_liaise
-      )
-      '-ouos' (
-        (must_liaise or may_liaise <- '{w}{o}{z}')
-        or <- '{w}{o}'
-        set must_liaise
-      )
-      '-en' (
-        (must_liaise or may_liaise <- '{scripta~}{n}')
-        or <- '{scripta~}'
-        set must_liaise
-      )
+  (
+    [substring] among (
+      'p{'}t-{e^}tre'
+      'pe{'}t-{e^}tre'
+        (<- '{p}{t}{e}{long}{t}{r}')
+      'p{'}t-{e^}t{'}'
+      'pe{'}t-{e^}t{'}'
+        (<- '{p}{t}{e}{long}{t}')
+      'deux-trais'
+        (<- '{d}{oe}{z}{t}{r}{e}')
     )
-  ) for phonemize_word_with_hyphens
-  unset must_liaise
-  tolimit
+  )
+  or
+  (
+    setlimit goto (
+      test [substring] atlimit
+      among (
+        '-t-i{'}' (<- '{t}{i}')
+        '-t-alle' (<- '{t}{a}{l}')
+        '-ieune' (<- '{j}{oe}{n}')
+        '-ieuni{e`}me' (<- '{j}{oe}{n}{j}{eps}{m}')
+
+        '-t-en' (
+          (must_liaise or may_liaise <- '{t}{scripta~}{n}')
+          or <- '{t}{scripta~}'
+        )
+
+        '-i{'}' (
+          set must_liaise
+          <- '{i}'
+        )
+        '-alle' (
+          set must_liaise
+          <- '{a}{l}'
+        )
+        '-y' (
+          set must_liaise
+          <- '{i}'
+        )
+        '-ous' (
+          (must_liaise or may_liaise <- '{u}{z}')
+          or <- '{u}'
+          set must_liaise
+        )
+        '-ouos' (
+          (must_liaise or may_liaise <- '{w}{o}{z}')
+          or <- '{w}{o}'
+          set must_liaise
+        )
+        '-en' (
+          (must_liaise or may_liaise <- '{scripta~}{n}')
+          or <- '{scripta~}'
+          set must_liaise
+        )
+      )
+    ) for phonemize_word_with_hyphens
+    unset must_liaise
+    tolimit
+  )
 )

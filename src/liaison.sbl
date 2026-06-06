@@ -33,12 +33,12 @@ define liaison as (
 
     'deux' (<- '{d}{oe}{z}')
     'trais' (<- '{t}{r}{e}{z}')
-    'si{e^}x' (<- '{s}{j}{ei}{z}')
-    'dgi{e^}x' (<- '{d}{ezh}{j}{ei}{z}')
-    'v{i^}ngt' (<- '{v}{e~}{t}')
+    'si{e^}x' (<- '{s}{j}{ei_long}{z}')
+    'dgi{e^}x' (<- '{d}{ezh}{j}{ei_long}{z}')
+    'v{i^}ngt' (<- '{v}{e~}{long}{t}')
     'sept' (<- '{s}{eps}{t}')
     'huit' (<- '{w}{i}{t}')
-
+    'neuf' (<- '{n}{oe}{v}')
   )
 )
 
@@ -46,12 +46,15 @@ define liaison_set_phrases as (
   [substring]
   among (
     'pus {a`} co' (<- '{p}{y}{z} {a} {k}{o}')
+    'temps en temps' (<- '{t}{scripta~}{z} {scripta~} {t}{scripta~}')
+    'd{'}temps en temps' (<- '{d}{t}{scripta~}{z} {scripta~} {t}{scripta~}')
     'pus en pus' (<- '{p}{y}{z} {scripta~} {p}{y}')
     'd{'}pus en pus' (<- '{d}{p}{y}{z} {scripta~} {p}{y}')
     'd{'}mains en mains' (<- '{d}{m}{eps~}{z} {scripta~} {m}{eps~}')
     'tout {a`} fait' (<- '{t}{u}{t} {a} {f}{ei}')
     'ch{'}est en tchi' (<- '{esh}{e}{t} {scripta~} {tch}{i}')
     'm{'}est avis' (<- '{m}{e}{t} {a}{v}{i}')
+    'est avis' (<- '{e}{t} {a}{v}{i}')
     // TODO: bein - yes or no?
   )
 )
