@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "jerriais-phonemizer"
+version = "1.0.0"
+description = "Jèrriais (Jersey Norman French) to IPA phonemiser, written in Snowball"
+readme = "README.md"
+requires-python = ">=3.10"
+license-files = ["LICENSE", "python/jerriais_phonemizer/_snowball/COPYING"]
+dependencies = []
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Text Processing :: Linguistic",
+]
+
+[project.urls]
+Homepage = "https://github.com/jerriais-tech/jerriais-phonemizer"
+
+[dependency-groups]
+dev = ["pytest"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["python/jerriais_phonemizer"]
+
+[tool.hatch.build.targets.sdist]
+include = ["python/", "src/", "tests/", "Makefile", "README.md", "LICENSE"]

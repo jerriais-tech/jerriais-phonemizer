@@ -1,1 +1,4 @@
 dist/dictionary
+build/
+__pycache__/
+.venv/

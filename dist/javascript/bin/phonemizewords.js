@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import process from "node:process";
 import readline from "node:readline";
-import { Phonemizer } from "../phonemizer.js";
+import Phonemizer from "../phonemizer.js";
 
 function usage() {
   console.log(`usage: phonemizewords.js [-l <language>] [-i <input file>] [-o <output file>] [-c <character encoding>] [-h]

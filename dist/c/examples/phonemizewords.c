@@ -5,7 +5,7 @@
 #include <string.h> /* for memmove */
 #include <ctype.h>  /* for isupper, tolower */
 
-#include "header.h"
+#include "api.h"
 #include "../phonemizer.h"
 
 const char * progname;
@@ -20,6 +20,9 @@ phonemizer_phonemize(struct SN_env * env, const symbol * word, int size)
         env->l = 0;
         return NULL;
     }
+    /* SN_set_current keeps the last word's backward limit, and a stale one changes
+       rules that use reverse; Python's set_current resets it, so do the same here. */
+    env->lb = 0;
     ret = phonemize(env);
     if (ret < 0) return NULL;
     env->p[env->l] = 0;
