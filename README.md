@@ -31,7 +31,6 @@ then compiles the rules for every language. The Python package's generated files
 - `make test`: the Python tests (`tests/test_cases.csv`, plus the two snapshots).
 - `make snapshot`: regenerate `tests/snapshot.dic` (the spellchecker's word list) and
   `tests/phrases.dic` from the C build. Do this only to accept a rule change, and read the diff.
-- `make docs`: copy the JavaScript build into `docs/js/` for the demo page.
 
 ## Licence
 

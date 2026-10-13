@@ -1,4 +1,4 @@
-all: javascript python docs c c_example
+all: javascript python c c_example
 
 # Snowball is fetched and built at this upstream release; nothing uses a snowball on the PATH.
 SNOWBALL_VERSION = v3.1.1
@@ -26,8 +26,6 @@ javascript: dist/javascript/phonemizer.js dist/javascript/base-stemmer.js
 # The Python package commits its generated files, so it installs from git without Snowball.
 python: $(py_pkg)/phonemizer.py $(py_pkg)/basestemmer.py $(py_pkg)/among.py $(py_pkg)/COPYING
 
-docs: docs/js/phonemizer.js docs/js/base-stemmer.js
-
 test: python
 	uv run pytest
 
@@ -37,10 +35,6 @@ snapshot: tests/snapshot.dic tests/phrases.dic
 tests/snapshot.dic tests/phrases.dic: dist/c/phonemizewords tests/jerriais.dic tests/phrases.txt
 	./dist/c/phonemizewords -i tests/jerriais.dic -o tests/snapshot.dic -p2
 	./dist/c/phonemizewords -i tests/phrases.txt -o tests/phrases.dic -p
-
-docs/js/%.js: dist/javascript/%.js
-	mkdir -p docs/js
-	cp $< $@
 
 dist/c/phonemizer.c dist/c/phonemizer.h: $(sbl_src) $(snowball)
 	$(snowball) src/jerriais-phonemizer.sbl -o dist/c/phonemizer -utf8
@@ -60,4 +54,4 @@ $(py_pkg)/basestemmer.py $(py_pkg)/among.py: $(snowball)
 $(py_pkg)/COPYING: $(snowball)
 	cp $(snowball_dir)/COPYING $@
 
-.PHONY: all c c_example javascript python docs test snapshot
+.PHONY: all c c_example javascript python test snapshot
