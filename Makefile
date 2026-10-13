@@ -9,11 +9,13 @@ sbl_src = src/jerriais-phonemizer.sbl src/stringdefs.sbl src/silent_nt.sbl src/s
 py_pkg = python/jerriais_phonemizer/_snowball
 
 $(snowball):
+	rm -rf $(snowball_dir)
 	git clone --quiet --depth 1 --branch $(SNOWBALL_VERSION) https://github.com/snowballstem/snowball $(snowball_dir)
 	$(MAKE) -C $(snowball_dir) snowball
 
 c_example: dist/c/phonemizewords
 
+# api.h and the runtime come from the Snowball checkout.
 dist/c/phonemizewords: dist/c/phonemizer.c dist/c/phonemizer.h dist/c/examples/phonemizewords.c
 	gcc dist/c/phonemizer.c dist/c/examples/phonemizewords.c $(snowball_dir)/runtime/*.c -I./dist/c -I$(snowball_dir)/runtime -o dist/c/phonemizewords
 

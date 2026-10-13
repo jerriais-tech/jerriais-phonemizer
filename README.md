@@ -14,11 +14,12 @@ pip install "jerriais-phonemizer @ git+https://github.com/jerriais-tech/jerriais
 ```python
 from jerriais_phonemizer import phonemize
 
-phonemize("bouônjour, bouonne gens.")       # 'bwõːʒur bwɔn ʒɑ̃'
-phonemize("bouônjour, bouonne gens.", "|")  # 'b|w|õː|ʒ|u|r b|w|ɔ|n ʒ|ɑ̃'
+phonemize("bouônjour, bouonne gens.")       # 'bwõːʒur bwɔn ʒɑ̃'
+phonemize("bouônjour, bouonne gens.", "|")  # 'b|w|õː|ʒ|u|r b|w|ɔ|n ʒ|ɑ̃'
 ```
 
-Input should be lowercase: uppercase letters are dropped, like punctuation.
+Input should be lowercase: uppercase letters are dropped, like punctuation. Nasal vowels come out
+as a letter plus U+0303 (combining tilde), never precomposed (õ).
 
 ## Building
 
