@@ -26,3 +26,5 @@ packages = ["python/jerriais_phonemizer"]
 
 [tool.hatch.build.targets.sdist]
 include = ["python/", "src/", "tests/", "Makefile", "README.md", "LICENSE"]
+# The spellchecker word list (and its snapshot) isn't ours to license.
+exclude = ["tests/jerriais.dic", "tests/snapshot.dic"]

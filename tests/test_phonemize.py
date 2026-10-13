@@ -28,6 +28,7 @@ def test_word_gives_the_ipa_vits_was_trained_on(text, expected):
     assert phonemize(text) == expected
 
 
+@pytest.mark.skipif(not (TESTS / "snapshot.dic").exists(), reason="the word list isn't in the sdist")
 def test_every_spellchecker_word_matches_the_snapshot():
     assert first_mismatches(read_pairs("snapshot.dic", "\t")) == []
 
