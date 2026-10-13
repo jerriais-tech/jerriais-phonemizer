@@ -8,6 +8,7 @@ version = "1.0.0"
 description = "Jèrriais (Jersey Norman French) to IPA phonemiser, written in Snowball"
 readme = "README.md"
 requires-python = ">=3.10"
+license = "AGPL-3.0-or-later"
 license-files = ["LICENSE", "python/jerriais_phonemizer/_snowball/COPYING"]
 dependencies = []
 classifiers = [

@@ -34,5 +34,6 @@ then compiles the rules for every language. The Python package's generated files
 
 ## Licence
 
-AGPL-3.0 (`LICENSE`). The Snowball runtime files in `python/jerriais_phonemizer/_snowball/` are
+GNU Affero General Public License, version 3 or (at your option) any later version
+(`AGPL-3.0-or-later`, `LICENSE`). The Snowball runtime files in `python/jerriais_phonemizer/_snowball/` are
 under Snowball's BSD licence (`COPYING` there).
