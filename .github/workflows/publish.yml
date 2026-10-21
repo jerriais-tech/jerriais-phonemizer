@@ -1,0 +1,43 @@
+# Builds a tagged release and uploads it to PyPI by trusted publishing (no API token).
+# Run by hand from the Actions tab with the tag to release. PyPI's trusted publisher for
+# jerriais-phonemizer names this repo, this file (publish.yml) and the environment "pypi".
+name: Publish to PyPI
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release, e.g. v1.0.0"
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ inputs.tag }}
+      - uses: astral-sh/setup-uv@v6
+      - name: The tag matches the package version
+        run: |
+          version=$(sed -n 's/^version = "\(.*\)"$/\1/p' pyproject.toml)
+          test "v$version" = "${{ inputs.tag }}" || { echo "tag ${{ inputs.tag }}, version $version"; exit 1; }
+      - run: uv run pytest
+      - run: uv build --out-dir packages
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: packages/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - uses: pypa/gh-action-pypi-publish@release/v1
