@@ -34,7 +34,7 @@ define liaison as (
     'deux' (<- '{d}{oe}{z}')
     'trais' (<- '{t}{r}{e}{z}')
     'si{e^}x' (<- '{s}{j}{ei_long}{z}')
-    'dgi{e^}x' (<- '{d}{ezh}{j}{ei_long}{z}')
+    'dgi{e^}x' (<- '{dg}{i}{ei_long}{z}')
     'v{i^}ngt' (<- '{v}{e~}{long}{t}')
     'sept' (<- '{s}{eps}{t}')
     'huit' (<- '{w}{i}{t}')

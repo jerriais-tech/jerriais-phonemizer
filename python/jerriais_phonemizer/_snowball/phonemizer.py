@@ -2060,7 +2060,7 @@ class Phonemizer(BaseStemmer):
         Among("vîngt", -1, 21),
         Among("ès", -1, 2)
     ]
-    as_0 = ("ø̃n", "ɛz", "lɛz", "dɛz", "ɑ̃n", "uz", "mɛz", "tɛz", "sɛz", "lyz", "noz", "voz", "nwoz", "vwoz", "ʃt", "ʃɛz", "dœz", "trez", "sjeːiz", "dʒjeːiz", "vẽːt", "sɛt", "wit", "nœv")
+    as_0 = ("ø̃n", "ɛz", "lɛz", "dɛz", "ɑ̃n", "uz", "mɛz", "tɛz", "sɛz", "lyz", "noz", "voz", "nwoz", "vwoz", "ʃt", "ʃɛz", "dœz", "trez", "sjeːiz", "ʤieːiz", "vẽːt", "sɛt", "wit", "nœv")
 
     a_1 = [
         Among("ch'est en tchi", -1, 8),
