@@ -50,7 +50,7 @@ and uploads them to PyPI by trusted publishing.
 - `tests/jerriais.dic`: the Jèrriais spellchecker word list from the Société Jersiaise's
   [spellchecker page](https://members.societe-jersiaise.org/sdllj/spellchecker.html), one word per line.
   `tests/snapshot.dic` is its phonemisation.
-- `tests/phrases.txt`: example phrases, some of them transcripts of Geraint Jennings's recordings.
+- `tests/phrases.txt`: example phrases.
   `tests/phrases.dic` is their phonemisation.
 
 The sdist leaves out the word list and its snapshot (3.6 MB); the test that uses them skips without them.
@@ -61,3 +61,5 @@ GNU Affero General Public License, version 3 or (at your option) any later versi
 (`AGPL-3.0-or-later`, `LICENSE`). If you run a modified version as a network service, the AGPL asks
 you to offer its source to the service's users. The Snowball runtime files in
 `python/jerriais_phonemizer/_snowball/` are under Snowball's BSD licence (`COPYING` there).
+
+For alternative licence terms, contact@jerriais.tech
