@@ -1,6 +1,6 @@
-# Jèrriais phonemiser
+# Jèrriais phonemizer
 
-A phonemiser for Jèrriais (Jersey Norman French), written in [Snowball](https://snowballstem.org/).
+A phonemizer for Jèrriais (Jersey Norman French), written in [Snowball](https://snowballstem.org/).
 The rules in `src/*.sbl` are the source; Snowball compiles them to Python, JavaScript and C.
 The output suits TTS and alignment: affricates are single symbols (ʧ, ʤ), and long vowels and
 diphthongs are marked with ː (eːi, oːu).
@@ -25,7 +25,7 @@ as a letter plus U+0303 (combining tilde), never precomposed (õ).
 
 `make javascript` writes `dist/javascript/phonemizer.js` (the class is the default export; call
 `new Phonemizer().phonemize(text)`), and `make c_example` builds a command-line tool,
-`dist/c/phonemizewords`, that phonemises a file of words or phrases one per line. These aren't
+`dist/c/phonemizewords`, that phonemizes a file of words or phrases one per line. These aren't
 published as packages.
 
 ## Building
@@ -49,9 +49,9 @@ and uploads them to PyPI by trusted publishing.
 
 - `tests/jerriais.dic`: the Jèrriais spellchecker word list from the Société Jersiaise's
   [spellchecker page](https://members.societe-jersiaise.org/sdllj/spellchecker.html), one word per line.
-  `tests/snapshot.dic` is its phonemisation.
+  `tests/snapshot.dic` is its phonemization.
 - `tests/phrases.txt`: example phrases.
-  `tests/phrases.dic` is their phonemisation.
+  `tests/phrases.dic` is their phonemization.
 
 The sdist leaves out the word list and its snapshot (3.6 MB); the test that uses them skips without them.
 

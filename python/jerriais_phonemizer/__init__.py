@@ -1,4 +1,4 @@
-"""Jèrriais to IPA phonemiser.
+"""Jèrriais to IPA phonemizer.
 
 The rules live in src/*.sbl; _snowball/ is generated from them by `make python`.
 """

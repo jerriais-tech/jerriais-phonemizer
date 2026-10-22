@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "jerriais-phonemizer"
 version = "1.0.1"
-description = "Jèrriais (Jersey Norman French) to IPA phonemiser, written in Snowball"
+description = "Jèrriais (Jersey Norman French) to IPA phonemizer, written in Snowball"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "AGPL-3.0-or-later"
