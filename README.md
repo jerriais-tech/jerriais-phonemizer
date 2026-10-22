@@ -1,6 +1,6 @@
 # Jèrriais phonemizer
 
-A phonemizer for Jèrriais (Jersey Norman French), written in [Snowball](https://snowballstem.org/).
+A phonemizer for Jèrriais (Jersey Norman), written in [Snowball](https://snowballstem.org/).
 The rules in `src/*.sbl` are the source; Snowball compiles them to Python, JavaScript and C.
 The output suits TTS and alignment: affricates are single symbols (ʧ, ʤ), and long vowels and
 diphthongs are marked with ː (eːi, oːu).
